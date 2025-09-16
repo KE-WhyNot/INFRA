@@ -4,21 +4,17 @@
 # Import common values
 import:
   - ../../../helm-common/values/common.yaml
-
 # Override common values for auth-service
 name: auth-service
 component: auth-service
 partOf: microservices
-
 # Image configuration
 image:
   registry: ""
-  repository: auth-service
-  tag: "latest"  # This will be updated by CI/CD
-
+  repository: docker.io/9september/auth-service
+  tag: "4b9e94f9b46add97031fc8d4efd7d84bde3f911d" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
-
 # Service configuration
 service:
   enabled: true
@@ -28,7 +24,6 @@ service:
       targetPort: 8080
       protocol: TCP
       name: http
-
 # Ingress configuration
 ingress:
   enabled: true
@@ -43,7 +38,6 @@ ingress:
           pathType: Prefix
           servicePort: 80
   tls: []
-
 # ConfigMap configuration
 configMap:
   enabled: true
@@ -51,7 +45,6 @@ configMap:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8080"
     LOGGING_LEVEL_ROOT: "INFO"
-
 # Secret configuration
 secret:
   enabled: true
@@ -59,12 +52,10 @@ secret:
   stringData:
     JWT_SECRET: "your-jwt-secret-key"
     DATABASE_PASSWORD: "your-database-password"
-
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8080"
-
 # Resources
 resources:
   limits:
@@ -73,13 +64,11 @@ resources:
   requests:
     cpu: 250m
     memory: 256Mi
-
 # Pod configuration
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "8080"
   prometheus.io/path: "/actuator/prometheus"
-
 # Health checks
 livenessProbe:
   httpGet:
@@ -89,7 +78,6 @@ livenessProbe:
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
@@ -98,18 +86,15 @@ readinessProbe:
   periodSeconds: 5
   timeoutSeconds: 3
   failureThreshold: 3
-
 # Service account
 serviceAccount:
   create: true
   name: ""
-
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false
