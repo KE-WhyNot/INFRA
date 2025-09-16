@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+  namespace: auth-service
+data:
+  # 이메일 설정 (비민감)
+  email.host: "smtp.gmail.com"
+  email.port: "587"
+  email.from: "youthfi.sender@gmail.com"
+
+  # JWT 설정 (비민감)
+  jwt.access.expiration: "3600000"
+  jwt.refresh.expiration: "604800000"
+  jwt.verification-expiration-ms: "900000"
+
+  # Redis 설정 (비민감)
+  spring.data.redis.host: "redis-service"
+  spring.data.redis.port: "6379"
+  spring.data.redis.database: "0"
+
+  # 앱 설정
+  app.client.url: "http://localhost:3000"
+
+  # 로깅 설정
+  logging.level.com.youthfi.auth: "INFO"
+  logging.level.org.springframework.security: "WARN"

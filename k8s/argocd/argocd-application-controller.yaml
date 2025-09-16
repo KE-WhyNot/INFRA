@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-application-controller
+  namespace: argocd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-application-controller
+  template:
+    metadata:
+      labels:
+        app: argocd-application-controller
+    spec:
+      serviceAccountName: argocd-application-controller
+      containers:
+      - name: argocd-application-controller
+        image: argoproj/argocd:latest
+        command:
+        - argocd-application-controller
+        volumeMounts:
+        - name: argocd-cm
+          mountPath: /app/config/controller
+        - name: argocd-secret
+          mountPath: /app/config/secret
+        - name: argocd-rbac-cm
+          mountPath: /app/config/rbac
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: argocd-cm
+        configMap:
+          name: argocd-cm
+      - name: argocd-secret
+        secret:
+          secretName: argocd-secret
+      - name: argocd-rbac-cm
+        configMap:
+          name: argocd-rbac-cm
