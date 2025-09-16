@@ -8,7 +8,10 @@ spec:
   source:
     repoURL: https://github.com/KE-WhyNot/INFRA
     targetRevision: main
-    path: k8s/auth-service
+    path: k8s/auth-service/helm
+    helm:
+      valueFiles:
+      - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: auth-service

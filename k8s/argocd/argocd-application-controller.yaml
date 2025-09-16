@@ -17,6 +17,11 @@ spec:
       containers:
       - name: argocd-application-controller
         image: argoproj/argocd:latest
+        env:
+        - name: ARGOCD_REDIS_SERVER
+          value: "argocd-redis:6379"
+        - name: ARGOCD_REDIS_DB
+          value: "0"
         command:
         - argocd-application-controller
         volumeMounts:

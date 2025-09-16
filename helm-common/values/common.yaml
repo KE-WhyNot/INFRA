@@ -1,0 +1,79 @@
+# Common values for all microservices
+
+# Service configuration
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  hosts: []
+  tls: []
+
+# ConfigMap configuration
+configMap:
+  enabled: false
+  data: {}
+  binaryData: {}
+
+# Secret configuration
+secret:
+  enabled: false
+  type: Opaque
+  data: {}
+  stringData: {}
+
+# ServiceAccount configuration
+serviceAccount:
+  create: true
+  name: ""
+
+# Pod configuration
+replicaCount: 1
+
+# Image configuration
+image:
+  registry: ""
+  repository: ""
+  tag: ""
+
+# Environment variables
+env: {}
+
+# Resources
+resources: {}
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: {}
+
+# Affinity
+affinity: {}
+
+# Pod security context
+podSecurityContext: {}
+
+# Container security context
+securityContext: {}
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod labels
+podLabels: {}
+
+# Component name
+component: "service"
+
+# Part of
+partOf: "microservices"
