@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-repo-server
+  namespace: argocd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-repo-server
+  template:
+    metadata:
+      labels:
+        app: argocd-repo-server
+    spec:
+      serviceAccountName: argocd-repo-server
+      containers:
+      - name: argocd-repo-server
+        image: argoproj/argocd:latest
+        ports:
+        - containerPort: 8081
+        command:
+        - argocd-repo-server
+        volumeMounts:
+        - name: argocd-cm
+          mountPath: /app/config/controller
+        - name: argocd-secret
+          mountPath: /app/config/secret
+        - name: argocd-rbac-cm
+          mountPath: /app/config/rbac
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: argocd-cm
+        configMap:
+          name: argocd-cm
+      - name: argocd-secret
+        secret:
+          secretName: argocd-secret
+      - name: argocd-rbac-cm
+        configMap:
+          name: argocd-rbac-cm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-repo-server
+  namespace: argocd
+spec:
+  selector:
+    app: argocd-repo-server
+  ports:
+  - name: grpc
+    port: 8081
+    targetPort: 8081
