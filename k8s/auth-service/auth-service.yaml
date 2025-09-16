@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: auth-service:latest  # CI가 실제 이미지 태그로 업데이트
+          image: docker.io/9september/auth-service:1e298c23d5f472db96ae5bd815a4c9d47cdd9783 # CI가 실제 이미지 태그로 업데이트
           ports:
             - containerPort: 8080
           env:
