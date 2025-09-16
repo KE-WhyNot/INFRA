@@ -9,6 +9,7 @@
 # Kubernetes kubeconfig (example patterns)
 **/.kube/
 **/kubeconfig
+/k8s/auth-service/auth-service-secret.yaml
 
 # Keys / credentials
 **/id_rsa
