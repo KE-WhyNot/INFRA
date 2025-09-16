@@ -41,6 +41,10 @@ data:
   # 리포지토리 서버 설정
   repo.server: argocd-repo-server:8081
   
+  # Redis 설정
+  redis.server: argocd-redis:6379
+  redis.db: "0"
+  
   # Dex 설정 (인증용)
   dex.config: |
     connectors: []

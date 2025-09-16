@@ -27,6 +27,10 @@ spec:
           value: "true"
         - name: ARGOCD_SERVER_INSECURE_BIND_ADDRESS
           value: "0.0.0.0"
+        - name: ARGOCD_REDIS_SERVER
+          value: "argocd-redis:6379"
+        - name: ARGOCD_REDIS_DB
+          value: "0"
         command:
         - argocd-server
         - --insecure
