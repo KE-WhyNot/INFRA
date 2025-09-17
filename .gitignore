@@ -1,14 +1,42 @@
+# macOS
+.DS_Store
+
+# Editor/IDE
 .idea/
 .vscode/
-.DS_Store
+*.swp
+*.swo
+
+
+
+# Terraform
+**/.terraform/**
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+tfplan
+*.tfplan
+terraform.tfvars
+terraform.tfvars.json
+
+# Kubernetes
+kubeconfig
+kubeconfig.yaml
+.kube/
+
+# Secrets/keys
+*.pem
+*.key
+*.crt
+*.p12
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.development
-.env.test
-.env.production
-.env.local
+.env.*
+
 
 /k8s/auth-service/auth-service-secret.yaml

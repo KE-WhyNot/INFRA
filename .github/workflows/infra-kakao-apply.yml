@@ -1,0 +1,80 @@
+name: infra-kakao-apply
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/envs/kakao/**'
+
+env:
+  TF_IN_AUTOMATION: true
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        working-directory: terraform/envs/kakao
+        run: terraform init -input=false | cat
+
+      - name: Terraform Validate
+        working-directory: terraform/envs/kakao
+        run: terraform validate | cat
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: terraform/envs/kakao
+        env:
+          TF_VAR_kc_region: ${{ secrets.KC_REGION }}
+          TF_VAR_kc_availability_zone: ${{ secrets.KC_AZ }}
+          TF_VAR_kc_auth_url: ${{ secrets.KC_AUTH_URL }}
+          TF_VAR_kc_access_key: ${{ secrets.KC_ACCESS_KEY }}
+          TF_VAR_kc_secret_key: ${{ secrets.KC_SECRET_KEY }}
+          TF_VAR_external_network_id: ${{ secrets.KC_EXTERNAL_NETWORK_ID }}
+          TF_VAR_cluster_image: ${{ secrets.KC_CLUSTER_IMAGE }}
+          TF_VAR_node_flavor: ${{ secrets.KC_NODE_FLAVOR }}
+          TF_VAR_master_flavor: ${{ secrets.KC_MASTER_FLAVOR }}
+          TF_VAR_keypair: ${{ secrets.KC_KEYPAIR_NAME }}
+        run: terraform plan -input=false -out=tfplan | cat
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: terraform/envs/kakao
+        env:
+          TF_VAR_kc_region: ${{ secrets.KC_REGION }}
+          TF_VAR_kc_availability_zone: ${{ secrets.KC_AZ }}
+          TF_VAR_kc_auth_url: ${{ secrets.KC_AUTH_URL }}
+          TF_VAR_kc_access_key: ${{ secrets.KC_ACCESS_KEY }}
+          TF_VAR_kc_secret_key: ${{ secrets.KC_SECRET_KEY }}
+          TF_VAR_external_network_id: ${{ secrets.KC_EXTERNAL_NETWORK_ID }}
+          TF_VAR_cluster_image: ${{ secrets.KC_CLUSTER_IMAGE }}
+          TF_VAR_node_flavor: ${{ secrets.KC_NODE_FLAVOR }}
+          TF_VAR_master_flavor: ${{ secrets.KC_MASTER_FLAVOR }}
+          TF_VAR_keypair: ${{ secrets.KC_KEYPAIR_NAME }}
+        run: terraform apply -input=false -auto-approve tfplan | cat
+
+      - name: Save cluster name (Magnum)
+        if: success()
+        working-directory: terraform/envs/kakao
+        run: |
+          terraform output -raw k8s_cluster_name > cluster_name.txt
+
+      - name: Upload cluster info artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kakao-cluster-info
+          path: |
+            terraform/envs/kakao/cluster_name.txt
+          retention-days: 1
+
+

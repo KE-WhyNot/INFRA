@@ -1,0 +1,78 @@
+name: infra-dev-apply
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/envs/dev/**'
+
+env:
+  TF_IN_AUTOMATION: true
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Configure OCI CLI authentication
+        uses: oracle-actions/configure-oci-credentials@v1.4.2
+        with:
+          oci-user-ocid: ${{ secrets.OCI_USER_OCID }}
+          oci-tenant-ocid: ${{ secrets.OCI_TENANCY_OCID }}
+          oci-fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+          oci-region: ${{ secrets.OCI_REGION }}
+          private-key: ${{ secrets.OCI_PRIVATE_KEY_PEM }}
+
+      - name: Terraform Init
+        working-directory: terraform/envs/dev
+        run: terraform init -input=false | cat
+
+      - name: Terraform Validate
+        working-directory: terraform/envs/dev
+        run: terraform validate | cat
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: terraform/envs/dev
+        env:
+          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+          TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_availability_domain: ${{ secrets.OCI_AD }}
+          TF_VAR_node_image_ocid: ${{ secrets.OCI_NODE_IMAGE_OCID }}
+        run: terraform plan -input=false -out=tfplan | cat
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        working-directory: terraform/envs/dev
+        env:
+          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+          TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_availability_domain: ${{ secrets.OCI_AD }}
+          TF_VAR_node_image_ocid: ${{ secrets.OCI_NODE_IMAGE_OCID }}
+        run: terraform apply -input=false -auto-approve tfplan | cat
+
+      - name: Show kubeconfig
+        if: success()
+        working-directory: terraform/envs/dev
+        run: terraform output -raw kubeconfig > kubeconfig.yaml
+
+      - name: Upload kubeconfig artifact (ephemeral)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubeconfig-dev
+          path: terraform/envs/dev/kubeconfig.yaml
+          retention-days: 1
+
+

@@ -1,0 +1,88 @@
+name: argocd-bootstrap
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["infra-dev-apply", "infra-kakao-apply"]
+    types:
+      - completed
+
+jobs:
+  bootstrap:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use provided kubeconfig secret if available (non-Magnum)
+        if: ${{ secrets.KAKAO_KUBECONFIG != '' }}
+        run: |
+          echo "${{ secrets.KAKAO_KUBECONFIG }}" > kubeconfig.yaml
+
+      - name: Try to download kubeconfig (OKE) artifact
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: kubeconfig-dev
+          path: .
+
+
+      - name: Download Kakao cluster info artifact
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: kakao-cluster-info
+          path: .
+
+      - name: If Kakao, fetch kubeconfig via OpenStack CLI (Magnum)
+        if: ${{ secrets.KAKAO_KUBECONFIG == '' && !hashFiles('kubeconfig.yaml') && hashFiles('cluster_name.txt') }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y python3-pip jq
+          pip3 install python-openstackclient python-magnumclient
+          echo "export OS_AUTH_URL=https://iam.kakaocloud.com/identity/v3" > openrc.sh
+          echo "export OS_REGION_NAME=kr-central-2" >> openrc.sh
+          echo "export OS_INTERFACE=public" >> openrc.sh
+          echo "export OS_IDENTITY_API_VERSION=3" >> openrc.sh
+          echo "export OS_ACCESS_KEY=${{ secrets.KC_ACCESS_KEY }}" >> openrc.sh
+          echo "export OS_SECRET_KEY=${{ secrets.KC_SECRET_KEY }}" >> openrc.sh
+          set +o history
+          source openrc.sh
+          CLUSTER_NAME=$(cat cluster_name.txt)
+          if [ -z "$CLUSTER_NAME" ]; then
+            echo "Cluster name artifact missing"; exit 1
+          fi
+          openstack coe cluster config "$CLUSTER_NAME" --dir . --force
+          test -f config || (echo "kubeconfig not found" && exit 1)
+          mv config kubeconfig.yaml
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.29.4'
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          cp kubeconfig.yaml $HOME/.kube/config
+
+      - name: Verify cluster access
+        run: kubectl version --short | cat
+
+      - name: Deploy ArgoCD via manifests (fallback to Helm install already in TF)
+        run: |
+          kubectl get ns argocd || kubectl create ns argocd
+          kubectl apply -f k8s/argocd/namespace.yaml || true
+          kubectl apply -f k8s/argocd/argocd-cm.yaml
+          kubectl apply -f k8s/argocd/argocd-secret.yaml
+          kubectl apply -f k8s/argocd/argocd-rbac-cm.yaml
+          kubectl apply -f k8s/argocd/rbac.yaml
+          kubectl apply -f k8s/argocd/argocd-redis.yaml
+          kubectl apply -f k8s/argocd/argocd-repo-server.yaml
+          kubectl apply -f k8s/argocd/argocd-application-controller.yaml
+          kubectl apply -f k8s/argocd/argocd-server.yaml
+
+      - name: Bootstrap Applications
+        run: |
+          kubectl apply -f k8s/argocd/argocd-infra-app.yaml
+          kubectl apply -f k8s/argocd/argocd-auth-app.yaml
+          kubectl apply -f k8s/argocd/argocd-nginx-ingress-app.yaml
+
+
