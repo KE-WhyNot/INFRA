@@ -1,0 +1,40 @@
+# terraform.tfvars.example
+# Copy this file to terraform.tfvars and fill in your values
+
+# OCI Configuration
+tenancy_ocid         = "ocid1.tenancy.oc1..aaaaaaaa3vnape3hfksec34csur4mnt5alzz3z4qbi5u5svkxbytowpdpbbq"
+user_ocid            = "ocid1.user.oc1..aaaaaaaa32syuy2ji6cgolixtdh3hglhklf2onu52p7rllmhljb354q5v6aq"
+fingerprint          = "60:26:eb:48:9d:f2:0c:28:b4:f7:51:e6:22:f6:4a:54"
+private_key_path     = "~/.oci/oci_api_key.pem"
+region               = "ap-chuncheon-1"
+config_file_profile  = "DEFAULT"
+
+# Compartment Configuration
+compartment_id       = "ocid1.compartment.oc1..aaaaaaaadrsn5yy3wnrsy6uy4aotjsxkxesggonesctshfqqvhqkihscbjdq"
+
+# Project Configuration
+project_name         = "infra"
+environment          = "dev"
+
+# OKE Cluster Configuration
+cluster_name                    = "oke-cluster"
+cluster_kubernetes_version      = "v1.33.1"
+node_pool_name                  = "worker-pool"
+node_pool_size                  = 3
+node_shape                      = "VM.Standard.E3.Flex"
+node_ocpus                      = 1
+node_memory_in_gbs              = 16
+
+# Network Configuration
+vcn_cidr = "10.0.0.0/16"
+subnet_cidrs = {
+  worker_subnet        = "10.0.10.0/24"
+  load_balancer_subnet = "10.0.20.0/24"
+}
+
+# ArgoCD Configuration
+argocd_namespace     = "argocd"
+argocd_chart_version = "5.51.6"
+
+# SSH Configuration (optional)
+ssh_public_key       = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCh4eB3wlgrdUjPTzXI7KT8Hr7xpzKxm4ZDaXNaMecwaiX+FFv9hUhR8MLIeKmnA5Yjj+rEWT2CEhFibeP6jTMPv7wujYYMPJk+oL1En+4/w+dwNLrMUrzHLHWmlAZv8WkslcXXZRpbajiDHhStowZn3JT2E/noeJG8bND0DzvBV1x06+y3qjZTeLm5ZExKKPKZp6DqyoK2o3CB1r+n6ZWep8qbv8hw9NS4ZcdUFlKGl8X10fCVzF4+HVPFjSMUvKLECmSAktxMrpPObJJQcDq+GtN4N66uyA/d7LKsCX0EtCHgRBv8OxbOyyhDoozLdeft1Lrc4PCadL+fU4FWR6pxD3GUkDX4q3198QOqgVaC4XocIfAbl5WoHRPkQcuooEwTZiy4kUDqkBi/paogfoauNW8RxkqValCJOLnnkFY52rW+q1j2MO7ZkIt0LBbZtIK6yos8hdXQptYpd1QMKgaWAz0l01wNzOdH7PFeerz/TK4Z6v+x7c235QTOZuiOrh+DRASQ+hau0Phg1f+VJEC00FyJpvLJEBYjAsrYErfpElGIDWb3sODlqE3FNg46JfFR/YBXiGYjpl6eUlEIAkQ1vn9lqpJgck1t2KQ9rDPlFD3Nw5AOA0JFjG5L00QE6H0SH86lh8KC6lH/j8D6yuHA0lCxIg4+SHEdFHqMQHtf0Q== oci-key"
