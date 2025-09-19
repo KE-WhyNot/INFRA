@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-repo-server
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: argocd-repo-server
+    app.kubernetes.io/part-of: argocd
+spec:
+  replicas: {{ .Values.repoServer.replicas }}
+  selector:
+    matchLabels:
+      app: argocd-repo-server
+  template:
+    metadata:
+      labels:
+        app: argocd-repo-server
+    spec:
+      serviceAccountName: argocd-repo-server
+      containers:
+      - name: argocd-repo-server
+        image: {{ .Values.repoServer.image.repository }}:{{ .Values.repoServer.image.tag }}
+        imagePullPolicy: {{ .Values.repoServer.image.pullPolicy }}
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ARGOCD_REDIS_SERVER
+          value: "argocd-redis:6379"
+        - name: ARGOCD_REDIS_DB
+          value: "0"
+        command:
+        - argocd-repo-server
+        volumeMounts:
+        - name: argocd-cm
+          mountPath: /app/config/controller
+        - name: argocd-secret
+          mountPath: /app/config/secret
+        resources:
+{{- toYaml .Values.repoServer.resources | nindent 10 }}
+        livenessProbe:
+          tcpSocket:
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: argocd-cm
+        configMap:
+          name: argocd-cm
+      - name: argocd-secret
+        secret:
+          secretName: argocd-secret

@@ -1,26 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: argocd-repo-server
-  namespace: argocd
+  name: argocd-application-controller
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: argocd-application-controller
+    app.kubernetes.io/part-of: argocd
 spec:
-  replicas: 1
+  replicas: {{ .Values.applicationController.replicas }}
   selector:
     matchLabels:
-      app: argocd-repo-server
+      app: argocd-application-controller
   template:
     metadata:
       labels:
-        app: argocd-repo-server
+        app: argocd-application-controller
     spec:
-      serviceAccountName: argocd-repo-server
+      serviceAccountName: argocd-application-controller
       containers:
-      - name: argocd-repo-server
-        image: argoproj/argocd:latest
-        ports:
-        - containerPort: 8081
+      - name: argocd-application-controller
+        image: {{ .Values.applicationController.image.repository }}:{{ .Values.applicationController.image.tag }}
+        imagePullPolicy: {{ .Values.applicationController.image.pullPolicy }}
+        env:
+        - name: ARGOCD_REDIS_SERVER
+          value: "argocd-redis:6379"
+        - name: ARGOCD_REDIS_DB
+          value: "0"
         command:
-        - argocd-repo-server
+        - argocd-application-controller
         volumeMounts:
         - name: argocd-cm
           mountPath: /app/config/controller
@@ -29,22 +36,17 @@ spec:
         - name: argocd-rbac-cm
           mountPath: /app/config/rbac
         resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+{{- toYaml .Values.applicationController.resources | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 8081
+            port: 8082
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /healthz
-            port: 8081
+            port: 8082
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:
@@ -57,16 +59,3 @@ spec:
       - name: argocd-rbac-cm
         configMap:
           name: argocd-rbac-cm
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: argocd-repo-server
-  namespace: argocd
-spec:
-  selector:
-    app: argocd-repo-server
-  ports:
-  - name: grpc
-    port: 8081
-    targetPort: 8081
