@@ -46,18 +46,22 @@ spec:
           imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
           command:
             - redis-server
+          {{- if .Values.secret.password }}
           args:
             - "--requirepass=$(REDIS_PASSWORD)"
+          {{- end }}
           ports:
             - name: redis
               containerPort: 6379
               protocol: TCP
+          {{- if .Values.secret.password }}
           env:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{- if .Values.secret.name -}}{{ .Values.secret.name }}{{- else -}}{{ $fullname }}-secret{{- end }}
                   key: password
+          {{- end }}
           volumeMounts:
             - name: redis-data
               mountPath: /data
