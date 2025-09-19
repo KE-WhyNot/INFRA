@@ -12,6 +12,13 @@ image:
 # Replica count
 replicaCount: 2
 
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
 # Service configuration
 service:
   enabled: true

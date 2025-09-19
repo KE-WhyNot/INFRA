@@ -15,6 +15,13 @@ image:
 # Replica count
 replicaCount: 2
 
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
 # Service configuration
 service:
   enabled: true
@@ -109,7 +116,7 @@ podSecurityContext:
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false  # Spring Boot가 임시 파일을 생성할 수 있도록 수정
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:
