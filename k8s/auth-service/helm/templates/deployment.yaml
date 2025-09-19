@@ -43,6 +43,9 @@ spec:
           - name: {{ $key }}
             value: {{ $value | quote }}
 {{- end }}
+        envFrom:
+          - secretRef:
+              name: auth-secrets
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
         {{- with .Values.livenessProbe }}
