@@ -28,8 +28,8 @@ spec:
         args:
         - /nginx-ingress-controller
         - --ingress-class={{ .Values.ingressClass }}
-        - --configmap=$(POD_NAMESPACE)/{{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
-        - --publish-service=$(POD_NAMESPACE)/{{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
+        - --configmap=$(POD_NAMESPACE)/{{ .Release.Name }}
+        - --publish-service=$(POD_NAMESPACE)/{{ .Release.Name }}
         env:
         - name: POD_NAME
           valueFrom:
