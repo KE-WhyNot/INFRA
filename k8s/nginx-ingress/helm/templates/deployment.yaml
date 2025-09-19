@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
     app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
+      serviceAccountName: {{ .Release.Name }}
       containers:
       - name: controller
         image: {{ .Values.image.registry }}{{ if .Values.image.registry }}/{{ end }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}

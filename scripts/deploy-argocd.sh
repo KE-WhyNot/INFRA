@@ -20,8 +20,8 @@ echo "  - Helm 저장소 업데이트 중..."
 helm repo update
 
 # Values 파일 확인
-if [ ! -f "k8s/argocd/values.yaml" ]; then
-    echo "  ❌ ArgoCD values.yaml 파일을 찾을 수 없습니다: k8s/argocd/values.yaml"
+if [ ! -f "../k8s/argocd/values.yaml" ]; then
+    echo "  ❌ ArgoCD values.yaml 파일을 찾을 수 없습니다: ../k8s/argocd/values.yaml"
     exit 1
 fi
 
@@ -51,7 +51,7 @@ fi
 
 # 4. ArgoCD 설치 (공식 Helm Chart 사용)
 echo "📦 ArgoCD 공식 Helm Chart 설치 중..."
-helm install argocd argo/argo-cd -n argocd --create-namespace -f k8s/argocd/values.yaml
+helm install argocd argo/argo-cd -n argocd --create-namespace -f ../k8s/argocd/values.yaml
 
 echo "  ✅ ArgoCD 설치 완료"
 
@@ -81,19 +81,19 @@ echo "  ✅ ArgoCD 서버 준비 완료"
 echo "📊 ArgoCD Application들 생성 중..."
 
 # Application 파일들이 있는지 확인
-if [ -d "k8s/argocd/applications" ]; then
+if [ -d "../k8s/argocd/applications" ]; then
     echo "  - Application 파일들을 찾았습니다. 생성 중..."
     
     # Auth Service Application 생성
-    if [ -f "k8s/argocd/applications/auth-service-app.yaml" ]; then
+    if [ -f "../k8s/argocd/applications/auth-service-app.yaml" ]; then
         echo "  - Auth Service Application 생성..."
-        kubectl apply -f k8s/argocd/applications/auth-service-app.yaml
+        kubectl apply -f ../k8s/argocd/applications/auth-service-app.yaml
     fi
     
     # Nginx Ingress Controller Application 생성
-    if [ -f "k8s/argocd/applications/nginx-ingress-app.yaml" ]; then
+    if [ -f "../k8s/argocd/applications/nginx-ingress-app.yaml" ]; then
         echo "  - Nginx Ingress Controller Application 생성..."
-        kubectl apply -f k8s/argocd/applications/nginx-ingress-app.yaml
+        kubectl apply -f ../k8s/argocd/applications/nginx-ingress-app.yaml
     fi
     
     echo "  ✅ Application 생성 완료"
