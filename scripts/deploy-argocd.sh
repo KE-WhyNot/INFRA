@@ -110,9 +110,9 @@ if lsof -Pi :$TARGET_PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
     sleep 2
 fi
 
-# ArgoCD 포트 포워딩 시작 (포트 8000으로 고정)
+# ArgoCD 포트 포워딩 시작 (로컬 8000 → ArgoCD 80)
 echo "  - ArgoCD 포트 8000으로 포트 포워딩 시작..."
-kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:8000 > /dev/null 2>&1 &
+kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:80 > /dev/null 2>&1 &
 ARGOCD_PF_PID=$!
 
 # 포트 포워딩이 시작될 때까지 잠시 대기
@@ -121,7 +121,7 @@ sleep 5
 # 포트 포워딩이 정상적으로 시작되었는지 확인
 if ! kill -0 $ARGOCD_PF_PID 2>/dev/null; then
     echo "  ❌ 포트 포워딩 시작 실패. 다시 시도 중..."
-    kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:8000 > /dev/null 2>&1 &
+    kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:80 > /dev/null 2>&1 &
     ARGOCD_PF_PID=$!
     sleep 3
 fi
