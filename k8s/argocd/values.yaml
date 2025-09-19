@@ -50,9 +50,9 @@ repoServer:
       cpu: 250m
       memory: 256Mi
 
-# Redis 설정 (비활성화)
+# Redis 설정
 redis:
-  enabled: false  # Redis 캐싱 비활성화
+  enabled: true  # Redis 캐싱 활성화
 
 # Dex 서버 설정 (인증)
 dex:
@@ -88,7 +88,7 @@ configs:
     server.disable.auth: false
     application.instanceLabelKey: argocd.argoproj.io/instance
     # 캐시 비활성화 설정
-    timeout.hard.reconciliation: 0s  # 캐시 타임아웃을 1초로 설정 (거의 비활성화)
+    timeout.hard.reconciliation: 1s  # 캐시 타임아웃을 1초로 설정 (거의 비활성화)
     timeout.reconciliation: 30s      # 일반 reconciliation 타임아웃 단축
 
   # 저장소 설정
