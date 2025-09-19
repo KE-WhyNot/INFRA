@@ -24,10 +24,6 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
-      {{- if and .Values.podAnnotations (gt (len .Values.podAnnotations) 0) }}
-      annotations:
-        {{- toYaml .Values.podAnnotations | nindent 8 }}
-      {{- end }}
       labels:
         app.kubernetes.io/name: redis
         app.kubernetes.io/instance: {{ .Release.Name }}
@@ -36,7 +32,7 @@ spec:
         {{- end }}
     spec:
       {{- with .Values.serviceAccount }}
-      serviceAccountName: {{- if .create -}}{{- default $fullname .name -}}{{- else -}}{{- default "default" .name -}}{{- end }}
+      serviceAccountName: {{ if .create }}{{ default $fullname .name }}{{ else }}{{ default "default" .name }}{{ end }}
       {{- end }}
       securityContext:
         {{- toYaml .Values.deployment.securityContext | nindent 8 }}
