@@ -1,9 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "service" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
   {{- with .Values.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -18,5 +22,6 @@ spec:
       name: {{ .name | default "http" }}
     {{- end }}
   selector:
-    {{- include "common.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
 

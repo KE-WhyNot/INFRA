@@ -1,29 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "ingress-controller" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "common.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "common.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      serviceAccountName: {{ include "common.serviceAccountName" . }}
+      serviceAccountName: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
       containers:
       - name: controller
-        image: {{ include "common.image" . }}
+        image: {{ .Values.image.registry }}{{ if .Values.image.registry }}/{{ end }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
         args:
         - /nginx-ingress-controller
         - --ingress-class={{ .Values.ingressClass }}
-        - --configmap=$(POD_NAMESPACE)/{{ include "common.fullname" . }}
-        - --publish-service=$(POD_NAMESPACE)/{{ include "common.fullname" . }}
+        - --configmap=$(POD_NAMESPACE)/{{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
+        - --publish-service=$(POD_NAMESPACE)/{{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
         env:
         - name: POD_NAME
           valueFrom:
@@ -40,7 +46,10 @@ spec:
           containerPort: 443
         - name: metrics
           containerPort: 10254
-        {{- include "common.resources" . | nindent 8 }}
+{{- if .Values.resources }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+{{- end }}
         {{- with .Values.livenessProbe }}
         livenessProbe:
           {{- toYaml . | nindent 10 }}
