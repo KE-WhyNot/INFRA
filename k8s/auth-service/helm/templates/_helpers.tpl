@@ -84,7 +84,7 @@ Common ingress class
 Common environment variables
 */}}
 {{- define "common.env" -}}
-{{- range $key, $value := .Values.env -}}
+{{- range $key, $value := .Values.env }}
 - name: {{ $key }}
   value: {{ $value | quote }}
 {{- end -}}

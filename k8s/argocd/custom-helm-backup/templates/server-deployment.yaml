@@ -1,29 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: argocd-application-controller
-  namespace: argocd
+  name: argocd-server
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/name: argocd-server
+    app.kubernetes.io/part-of: argocd
 spec:
-  replicas: 1
+  replicas: {{ .Values.server.replicas }}
   selector:
     matchLabels:
-      app: argocd-application-controller
+      app: argocd-server
   template:
     metadata:
       labels:
-        app: argocd-application-controller
+        app: argocd-server
     spec:
-      serviceAccountName: argocd-application-controller
+      serviceAccountName: argocd-server
       containers:
-      - name: argocd-application-controller
-        image: argoproj/argocd:latest
+      - name: argocd-server
+        image: {{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}
+        imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.server.service.ports.http }}
+        - containerPort: {{ .Values.server.service.ports.grpc }}
         env:
-        - name: ARGOCD_REDIS_SERVER
-          value: "argocd-redis:6379"
-        - name: ARGOCD_REDIS_DB
-          value: "0"
+{{- toYaml .Values.server.env | nindent 8 }}
         command:
-        - argocd-application-controller
+        - argocd-server
+        - --insecure
+        - --staticassets
+        - /shared/app
         volumeMounts:
         - name: argocd-cm
           mountPath: /app/config/controller
@@ -32,22 +39,17 @@ spec:
         - name: argocd-rbac-cm
           mountPath: /app/config/rbac
         resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+{{- toYaml .Values.server.resources | nindent 10 }}
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 8082
+            port: {{ .Values.server.service.ports.http }}
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /healthz
-            port: 8082
+            port: {{ .Values.server.service.ports.http }}
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:
