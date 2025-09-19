@@ -68,7 +68,14 @@ helm list -n argocd
 
 # 6. ArgoCD 서버가 준비될 때까지 대기
 echo "⏳ ArgoCD 서버가 준비될 때까지 대기 중..."
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
+echo "  - 최대 5분까지 대기합니다..."
+if ! kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd; then
+    echo "  ⚠️  ArgoCD 서버 시작 타임아웃 (5분)"
+    echo "  💡 수동으로 확인하세요: kubectl get pods -n argocd"
+    echo "  💡 로그 확인: kubectl logs -f deployment/argocd-server -n argocd"
+    exit 1
+fi
+echo "  ✅ ArgoCD 서버 준비 완료"
 
 # 7. ArgoCD Application들 생성
 echo "📊 ArgoCD Application들 생성 중..."

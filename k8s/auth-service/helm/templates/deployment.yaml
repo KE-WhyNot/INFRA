@@ -1,35 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "service" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "common.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        {{- include "common.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccountName: {{ include "common.serviceAccountName" . }}
+      serviceAccountName: {{ .Release.Name }}-{{ .Values.name | default .Chart.Name }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-      - name: {{ include "common.name" . }}
-        image: {{ include "common.image" . }}
+      - name: {{ .Values.name | default .Chart.Name }}
+        image: {{ .Values.image.registry }}{{ if .Values.image.registry }}/{{ end }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
           containerPort: 8080
         env:
-          {{- include "common.env" . | nindent 10 }}
+{{- range $key, $value := .Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+{{- end }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
         {{- with .Values.livenessProbe }}
@@ -40,8 +49,20 @@ spec:
         readinessProbe:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        {{- include "common.resources" . | nindent 8 }}
-      {{- include "common.nodeSelector" . | nindent 6 }}
-      {{- include "common.tolerations" . | nindent 6 }}
-      {{- include "common.affinity" . | nindent 6 }}
+{{- if .Values.resources }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+{{- end }}
+{{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+{{- end }}
+{{- if .Values.tolerations }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+{{- end }}
+{{- if .Values.affinity }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+{{- end }}
 

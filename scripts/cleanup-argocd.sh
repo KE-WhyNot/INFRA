@@ -30,7 +30,17 @@ kubectl get serviceaccount -n argocd 2>/dev/null | grep argocd | awk '{print $1}
 
 echo "  ✅ RBAC 리소스 삭제 완료"
 
- # 3. Kubernetes 네임스페이스 삭제
+ # 3. ArgoCD Application finalizer 제거
+echo "🗂️  ArgoCD Application finalizer 제거 중..."
+if kubectl get namespace argocd >/dev/null 2>&1; then
+    echo "  - Application finalizer 제거 중..."
+    kubectl get applications -n argocd -o name 2>/dev/null | xargs -r kubectl patch -n argocd --type merge --patch '{"metadata":{"finalizers":[]}}' 2>/dev/null || true
+    
+    echo "  - Application 강제 삭제 중..."
+    kubectl delete applications --all -n argocd --force --grace-period=0 2>/dev/null || true
+fi
+
+# 4. Kubernetes 네임스페이스 삭제
 echo "🏗️  Kubernetes 네임스페이스 삭제 중..."
 if kubectl get namespace argocd >/dev/null 2>&1; then
     echo "  - 일반 삭제 시도 중..."
@@ -46,19 +56,27 @@ if kubectl get namespace argocd >/dev/null 2>&1; then
     fi
     
     echo "  - 네임스페이스 완전 삭제 확인 중..."
-    for i in {1..10}; do
-        if ! kubectl get namespace argocd >/dev/null 2>&1; then
-            echo "  ✅ 네임스페이스 삭제 완료"
+    TIMEOUT=60  # 60초 타임아웃
+    ELAPSED=0
+    while kubectl get namespace argocd >/dev/null 2>&1; do
+        if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "  ⚠️  타임아웃: 네임스페이스 삭제에 ${TIMEOUT}초가 걸렸습니다"
+            echo "  💡 수동으로 확인하세요: kubectl get namespace argocd"
             break
         fi
-        echo "  ⏳ 네임스페이스 삭제 대기 중... ($i/10)"
-        sleep 2
+        echo "  ⏳ 네임스페이스 삭제 대기 중... (${ELAPSED}/${TIMEOUT}초)"
+        sleep 5
+        ELAPSED=$((ELAPSED + 5))
     done
+    
+    if ! kubectl get namespace argocd >/dev/null 2>&1; then
+        echo "  ✅ 네임스페이스 삭제 완료 (${ELAPSED}초 소요)"
+    fi
 else
     echo "  ℹ️  삭제할 네임스페이스가 없습니다"
 fi
 
-# 4. 추가 정리 작업
+# 5. 추가 정리 작업
 echo "🧹 추가 정리 작업 중..."
 
 # CustomResourceDefinition 정리
@@ -77,11 +95,11 @@ kubectl get secret -A | grep argocd | awk '{print $2 " -n " $1}' | xargs -r kube
 
 echo "  ✅ 추가 정리 작업 완료"
 
-# 5. ArgoCD 관련 모든 리소스 삭제 (혹시 남아있는 것들)
+# 6. ArgoCD 관련 모든 리소스 삭제 (혹시 남아있는 것들)
 echo "🗑️  남은 ArgoCD 리소스 정리 중..."
 kubectl get all -A | grep argocd | awk '{print $2 " -n " $1}' | xargs -r kubectl delete 2>/dev/null || true
 
-# 6. Docker 컨테이너 및 이미지 삭제
+# 7. Docker 컨테이너 및 이미지 삭제
 echo "🐳 Docker 리소스 삭제 중..."
 
 # ArgoCD 관련 실행 중인 컨테이너 중지 및 삭제
