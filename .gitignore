@@ -12,3 +12,5 @@
 .env.local
 
 /k8s/auth-service/auth-service-secret.yaml
+
+.port-forward/
