@@ -1,11 +1,7 @@
 # Default values for auth-service
 # This is a YAML-formatted file.
 
-# Import common values
-import:
-  - ../../../helm-common/values/common.yaml
-
-# Override common values for auth-service
+# Auth Service configuration
 name: auth-service
 component: auth-service
 partOf: microservices
