@@ -24,15 +24,15 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- if and .Values.podAnnotations (gt (len .Values.podAnnotations) 0) }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/name: redis
         app.kubernetes.io/instance: {{ .Release.Name }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{- if and .Values.podLabels (gt (len .Values.podLabels) 0) }}
+        {{- toYaml .Values.podLabels | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.serviceAccount }}
