@@ -1,24 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: auth-service
+  name: nginx-ingress
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
 spec:
   project: default
   source:
     repoURL: https://github.com/KE-WhyNot/INFRA
-    targetRevision: main
-    path: k8s/auth-service/helm
-    helm:
-      valueFiles:
-      - values.yaml
+    targetRevision: HEAD
+    path: k8s/nginx-ingress/helm
   destination:
     server: https://kubernetes.default.svc
-    namespace: auth-service
+    namespace: nginx-ingress
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
-  revisionHistoryLimit: 10
+      - CreateNamespace=true
