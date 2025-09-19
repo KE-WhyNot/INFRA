@@ -102,38 +102,11 @@ else
     echo "  💡 필요시 ArgoCD UI에서 수동으로 Application을 생성하세요."
 fi
 
-# 8. 포트 8000 자동 연결 설정
-echo "🔌 포트 8000 자동 연결 설정 중..."
-
-# 기존 포트 포워딩 중단
-echo "  - 기존 포트 포워딩 중단..."
-pkill -f "kubectl.*port-forward.*argocd" 2>/dev/null || true
-
-# 포트 8000이 사용 중인지 확인
-TARGET_PORT=8000
-if lsof -Pi :$TARGET_PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
-    echo "  ⚠️  포트 $TARGET_PORT이 사용 중입니다. 기존 프로세스를 종료합니다..."
-    lsof -ti :$TARGET_PORT | xargs kill -9 2>/dev/null || true
-    sleep 2
-fi
-
-# ArgoCD 포트 포워딩 시작 (로컬 8000 → ArgoCD 80)
-echo "  - ArgoCD 포트 8000으로 포트 포워딩 시작..."
-kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:80 > /dev/null 2>&1 &
-ARGOCD_PF_PID=$!
-
-# 포트 포워딩이 시작될 때까지 잠시 대기
-sleep 5
-
-# 포트 포워딩이 정상적으로 시작되었는지 확인
-if ! kill -0 $ARGOCD_PF_PID 2>/dev/null; then
-    echo "  ❌ 포트 포워딩 시작 실패. 다시 시도 중..."
-    kubectl port-forward svc/argocd-server -n argocd $TARGET_PORT:80 > /dev/null 2>&1 &
-    ARGOCD_PF_PID=$!
-    sleep 3
-fi
-
-PORT=$TARGET_PORT
+# 8. 포트포워딩 안내 (자동 수행 제거됨)
+echo "ℹ️  포트포워딩은 자동으로 수행하지 않습니다. 필요 시 다음 스크립트를 사용하세요:"
+echo "    ./scripts/port-forward.sh start-preset argocd   # 8000 → argocd-server:80"
+echo "    ./scripts/port-forward.sh start-preset auth-service  # 8080 → auth-service:80"
+echo "    ./scripts/port-forward.sh start-preset redis    # 16379 → redis:6379"
 
 # 9. 최종 상태 확인
 echo "🔍 최종 상태 확인 중..."
@@ -155,11 +128,11 @@ echo ""
 echo "🎉 ArgoCD 배포가 완료되었습니다!"
 echo ""
 echo "📋 접속 정보:"
-echo "  - ArgoCD UI: http://localhost:$PORT"
+echo "  - ArgoCD UI: http://localhost:8000 (port-forward 필요)"
 echo "  - 사용자명: admin"
 echo "  - 패스워드: $ADMIN_PASSWORD"
 echo "  - 네임스페이스: argocd"
-echo "  - 포트 포워딩 PID: $ARGOCD_PF_PID"
+echo "  - 포트포워딩: ./scripts/port-forward.sh start-preset argocd"
 echo ""
 echo "📊 등록된 Application:"
 echo "  - Auth Service (k8s/auth-service/helm)"
@@ -173,11 +146,4 @@ echo "  - 로그 확인: kubectl logs -f deployment/argocd-server -n argocd"
 echo "  - 포트 포워딩 중단: kill $ARGOCD_PF_PID"
 echo "  - ArgoCD 삭제: helm uninstall argocd -n argocd"
 echo ""
-echo "🚀 브라우저에서 ArgoCD UI 열기 중..."
-if command -v open >/dev/null 2>&1; then
-    open "http://localhost:$PORT"
-elif command -v xdg-open >/dev/null 2>&1; then
-    xdg-open "http://localhost:$PORT"
-else
-    echo "  💡 브라우저에서 http://localhost:$PORT 을 열어주세요"
-fi
+echo "💡 브라우저에서 http://localhost:8000 을 열기 전에 포트포워딩을 시작하세요."
