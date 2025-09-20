@@ -96,6 +96,12 @@ if [ -d "../k8s/argocd/applications" ]; then
         kubectl apply -f ../k8s/argocd/applications/nginx-ingress-app.yaml
     fi
     
+    # Redis Application 생성
+    if [ -f "../k8s/argocd/applications/redis-app.yaml" ]; then
+        echo "  - Redis Application 생성..."
+        kubectl apply -f ../k8s/argocd/applications/redis-app.yaml
+    fi
+    
     echo "  ✅ Application 생성 완료"
 else
     echo "  ℹ️  Application 파일들이 없습니다. ArgoCD만 설치됩니다."
@@ -137,6 +143,7 @@ echo ""
 echo "📊 등록된 Application:"
 echo "  - Auth Service (k8s/auth-service/helm)"
 echo "  - Nginx Ingress (k8s/nginx-ingress/helm)"
+echo "  - Redis (k8s/redis/helm)"
 echo ""
 echo "🔧 유용한 명령어:"
 echo "  - 파드 상태 확인: kubectl get pods -n argocd"
