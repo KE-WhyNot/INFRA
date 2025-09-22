@@ -358,62 +358,6 @@ resource "null_resource" "fetch_kubeconfig" {
   depends_on = [null_resource.k8s_master_init]
 }
 
-# ArgoCD 네임스페이스
-# ArgoCD 설치를 마스터 노드에서 Helm으로 자동 실행(원격)
-resource "null_resource" "install_argocd_via_helm_on_master" {
-  count = var.enable_argocd ? 1 : 0
-  depends_on = [null_resource.k8s_master_init]
-
-  provisioner "remote-exec" {
-    connection {
-      host        = openstack_networking_floatingip_v2.k8s_master_fip.address
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("${path.module}/keys/k8s-cluster-key")
-      timeout     = "10m"
-      agent       = false
-    }
-
-    inline = [
-      # Helm 설치
-      "curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash",
-      # values 파일 작성
-      <<-EOV,
-cat > /tmp/argocd-values.yaml <<'VAL'
-${file("${path.module}/helm/argocd-values.yaml")}
-VAL
-EOV
-      # ArgoCD 설치
-      "helm repo add argo https://argoproj.github.io/argo-helm && helm repo update",
-      "helm upgrade --install argo-cd argo/argo-cd -n argocd --create-namespace -f /tmp/argocd-values.yaml",
-      # App of Apps 생성
-      <<-EOA,
-cat > /tmp/root-app.yaml <<'APP'
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: root-app
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/KE-WhyNot/INFRA.git
-    targetRevision: develop
-    path: k8s/argocd/applications
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-APP
-EOA
-      "kubectl apply -f /tmp/root-app.yaml",
-    ]
-  }
-}
-
 # 10. 워커 노드 조인
 ## SSH 없이 조인하도록 remote-exec 제거됨
 
