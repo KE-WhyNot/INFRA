@@ -1,0 +1,42 @@
+# 카카오클라우드 OpenStack 인증 정보
+# 실제 값은 terraform.tfvars에 설정하거나 환경변수로 설정하세요
+kc_auth_url                      = "https://iam.kakaocloud.com/identity/v3"
+kc_application_credential_id     = "YOUR_APPLICATION_CREDENTIAL_ID"
+kc_application_credential_secret = "YOUR_APPLICATION_CREDENTIAL_SECRET"
+kc_region                        = "kr-central-2"
+
+# 프로젝트 설정
+project_name = "infra-project"
+environment  = "dev"
+
+# 기존 네트워크 정보 (OpenStack용)
+existing_vpc_id = "YOUR_VPC_ID"
+existing_subnet_ids = [
+  "YOUR_SUBNET_ID_1",
+  "YOUR_SUBNET_ID_2",
+  "YOUR_SUBNET_ID_3",
+  "YOUR_SUBNET_ID_4"
+]
+floating_ip_pool = "EXTERNAL"
+
+# 쿠버네티스 클러스터 설정 (관리형 Kubernetes Engine 사용)
+k8s_cluster_name      = "k8s-cluster"
+k8s_version           = "1.28"
+worker_node_count     = 3
+
+# Flavor ID 설정 (Kakao Cloud의 실제 Flavor ID)
+worker_flavor_id = "YOUR_FLAVOR_ID"
+
+# 이미지 ID 설정
+worker_image_id = "YOUR_IMAGE_ID"
+
+# SSH 키 설정
+ssh_key_name = "YOUR_SSH_KEY_NAME"
+
+# 태그 설정
+tags = {
+  Project     = "INFRA"
+  Environment = "dev"
+  ManagedBy   = "Terraform"
+  Owner       = "DevOps Team"
+}
