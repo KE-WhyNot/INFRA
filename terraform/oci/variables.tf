@@ -57,7 +57,7 @@ variable "node_shape" {
 variable "node_ocpus" {
   description = "Number of OCPUs per node"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "node_memory_in_gbs" {
@@ -101,3 +101,67 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+# ArgoCD Variables
+variable "argocd_namespace" {
+  description = "ArgoCD namespace"
+  type        = string
+  default     = "argocd"
+}
+
+variable "argocd_chart_version" {
+  description = "ArgoCD Helm chart version"
+  type        = string
+  default     = "5.51.6"
+}
+
+variable "argocd_server_host" {
+  description = "ArgoCD server host"
+  type        = string
+  default     = "argocd.example.com"
+}
+
+variable "argocd_admin_password" {
+  description = "ArgoCD admin password"
+  type        = string
+  sensitive   = true
+}
+
+# Nginx Ingress Variables
+variable "nginx_ingress_namespace" {
+  description = "Nginx Ingress namespace"
+  type        = string
+  default     = "ingress-nginx"
+}
+
+variable "nginx_ingress_chart_version" {
+  description = "Nginx Ingress Helm chart version"
+  type        = string
+  default     = "4.8.3"
+}
+
+variable "nginx_ingress_class" {
+  description = "Nginx Ingress class name"
+  type        = string
+  default     = "nginx"
+}
+
+# Cert-Manager 설정
+variable "cert_manager_chart_version" {
+  description = "Cert-Manager Helm chart version"
+  type        = string
+  default     = "v1.13.3"
+}
+
+variable "letsencrypt_email" {
+  description = "Email for Let's Encrypt certificate registration"
+  type        = string
+  default     = "admin@youth-fi.com"
+}
+
+# 기존 고정 IP 설정
+variable "existing_reserved_ip_id" {
+  description = "OCID of existing reserved public IP"
+  type        = string
+}
+ 
