@@ -27,7 +27,7 @@ spec:
             pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
-                name: {{ $.Release.Name }}-{{ $.Values.name | default $.Chart.Name }}
+                name: {{ $.Release.Name }}
                 port:
                   number: {{ .servicePort | default 80 }}
           {{- end }}
