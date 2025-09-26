@@ -20,7 +20,7 @@ strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
-    maxUnavailable: 1
+    maxUnavailable: 0
 
 # Service configuration
 service:
@@ -57,24 +57,162 @@ configMap:
 
 # Secret configuration
 secret:
-  enabled: true
-  type: Opaque
-  stringData:
-    JWT_SECRET: "your-jwt-secret-key"
-    DATABASE_PASSWORD: "your-database-password"
+  enabled: false
 
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
-  SERVER_PORT: "8080"
+  MANAGEMENT_SERVER_PORT: "8080"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
+  MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+
+  # From Secret: auth-service-secret
+  SPRING_DATASOURCE_URL:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.datasource.url
+  SPRING_DATASOURCE_USERNAME:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.datasource.username
+  SPRING_DATASOURCE_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.datasource.password
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.datasource.driver-class-name
+
+  SPRING_DATA_REDIS_HOST:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.data.redis.host
+  SPRING_DATA_REDIS_PORT:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.data.redis.port
+  SPRING_DATA_REDIS_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.data.redis.password
+  SPRING_DATA_REDIS_DATABASE:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: spring.data.redis.database
+  JWT_KEY:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: jwt.key
+  JWT_ACCESS_EXPIRATION:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: jwt.access.expiration
+  JWT_REFRESH_EXPIRATION:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: jwt.refresh.expiration
+  JWT_VERIFICATION_EXPIRATION_MS:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: jwt.verification-expiration-ms
+  EMAIL_FROM:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: email.from
+  EMAIL_HOST:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: email.host
+  EMAIL_PORT:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: email.port
+  EMAIL_USERNAME:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: email.username
+  EMAIL_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: email.password
+  APP_CLIENT_URL:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: app.client.url
+  AUTH_OAUTH2_CLIENTS_GOOGLE_CLIENT_ID:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.google.client-id
+  AUTH_OAUTH2_CLIENTS_GOOGLE_CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.google.client-secret
+  AUTH_OAUTH2_CLIENTS_GOOGLE_REDIRECT_URI:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.google.redirect-uri
+  AUTH_OAUTH2_CLIENTS_NAVER_CLIENT_ID:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.naver.client-id
+  AUTH_OAUTH2_CLIENTS_NAVER_CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.naver.client-secret
+  AUTH_OAUTH2_CLIENTS_NAVER_REDIRECT_URI:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.naver.redirect-uri
+  AUTH_OAUTH2_CLIENTS_KAKAO_CLIENT_ID:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.kakao.client-id
+  AUTH_OAUTH2_CLIENTS_KAKAO_CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.kakao.client-secret
+  AUTH_OAUTH2_CLIENTS_KAKAO_REDIRECT_URI:
+    valueFrom:
+      secretKeyRef:
+        name: auth-service-secret
+        key: auth.oauth2.clients.kakao.redirect-uri
 
 # Resources
 resources:
   limits:
-    cpu: 500m
+    cpu: 300m
     memory: 512Mi
   requests:
-    cpu: 250m
+    cpu: 100m
     memory: 256Mi
 
 # Pod configuration
@@ -83,24 +221,27 @@ podAnnotations:
   prometheus.io/port: "8080"
   prometheus.io/path: "/actuator/prometheus"
 
+startupProbe:
+  httpGet:
+    path: /actuator/health
+    port: 8080
+  initialDelaySeconds: 180
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
 # Health checks
 livenessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-  initialDelaySeconds: 30
+  initialDelaySeconds: 180
   periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 3
+  timeoutSeconds: 10
+  failureThreshold: 12
 
-readinessProbe:
-  httpGet:
-    path: /actuator/health/readiness
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 5
-  timeoutSeconds: 3
-  failureThreshold: 3
+# Readiness probe (disabled)
+readinessProbe: null
 
 # Service account
 serviceAccount:
