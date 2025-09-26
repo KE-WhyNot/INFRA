@@ -68,142 +68,142 @@ env:
   MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
   MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
 
-  # From Secret: auth-service-secret
-  SPRING_DATASOURCE_URL:
+  # From Secret: auth-secrets
+  spring.datasource.url:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.datasource.url
-  SPRING_DATASOURCE_USERNAME:
+  spring.datasource.username:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.datasource.username
-  SPRING_DATASOURCE_PASSWORD:
+  spring.datasource.password:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.datasource.password
-  SPRING_DATASOURCE_DRIVER_CLASS_NAME:
+  spring.datasource.driver-class-name:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.datasource.driver-class-name
 
-  SPRING_DATA_REDIS_HOST:
+  spring.data.redis.host:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.data.redis.host
-  SPRING_DATA_REDIS_PORT:
+  spring.data.redis.port:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.data.redis.port
-  SPRING_DATA_REDIS_PASSWORD:
+  spring.data.redis.password:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.data.redis.password
-  SPRING_DATA_REDIS_DATABASE:
+  spring.data.redis.database:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: spring.data.redis.database
-  JWT_KEY:
+  jwt.key:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: jwt.key
-  JWT_ACCESS_EXPIRATION:
+  jwt.access.expiration:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: jwt.access.expiration
-  JWT_REFRESH_EXPIRATION:
+  jwt.refresh.expiration:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: jwt.refresh.expiration
-  JWT_VERIFICATION_EXPIRATION_MS:
+  jwt.verification-expiration-ms:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: jwt.verification-expiration-ms
-  EMAIL_FROM:
+  email.from:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: email.from
-  EMAIL_HOST:
+  email.host:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: email.host
-  EMAIL_PORT:
+  email.port:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: email.port
-  EMAIL_USERNAME:
+  email.username:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: email.username
-  EMAIL_PASSWORD:
+  email.password:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: email.password
-  APP_CLIENT_URL:
+  app.client.url:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: app.client.url
-  AUTH_OAUTH2_CLIENTS_GOOGLE_CLIENT_ID:
+  auth.oauth2.clients.google.client-id:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.google.client-id
-  AUTH_OAUTH2_CLIENTS_GOOGLE_CLIENT_SECRET:
+  auth.oauth2.clients.google.client-secret:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.google.client-secret
-  AUTH_OAUTH2_CLIENTS_GOOGLE_REDIRECT_URI:
+  auth.oauth2.clients.google.redirect-uri:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.google.redirect-uri
-  AUTH_OAUTH2_CLIENTS_NAVER_CLIENT_ID:
+  auth.oauth2.clients.naver.client-id:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.naver.client-id
-  AUTH_OAUTH2_CLIENTS_NAVER_CLIENT_SECRET:
+  auth.oauth2.clients.naver.client-secret:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.naver.client-secret
-  AUTH_OAUTH2_CLIENTS_NAVER_REDIRECT_URI:
+  auth.oauth2.clients.naver.redirect-uri:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.naver.redirect-uri
-  AUTH_OAUTH2_CLIENTS_KAKAO_CLIENT_ID:
+  auth.oauth2.clients.kakao.client-id:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.kakao.client-id
-  AUTH_OAUTH2_CLIENTS_KAKAO_CLIENT_SECRET:
+  auth.oauth2.clients.kakao.client-secret:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.kakao.client-secret
-  AUTH_OAUTH2_CLIENTS_KAKAO_REDIRECT_URI:
+  auth.oauth2.clients.kakao.redirect-uri:
     valueFrom:
       secretKeyRef:
-        name: auth-service-secret
+        name: auth-secrets
         key: auth.oauth2.clients.kakao.redirect-uri
 
 # Resources

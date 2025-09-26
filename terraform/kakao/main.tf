@@ -288,8 +288,6 @@ resource "openstack_networking_port_v2" "k8s_worker_port" {
   }
 }
 
-# 8. Floating IP는 위 리소스에서 포트에 직접 연결됨
-
 # 9. SSH 연결 대기 및 검증
 resource "null_resource" "wait_for_ssh" {
   depends_on = [
@@ -350,12 +348,6 @@ resource "null_resource" "k8s_master_init" {
 
     script = "${path.module}/scripts/k8s-init.sh"
   }
-}
-
-# (옵션) kubeconfig를 로컬 파일로 저장 — 현재 Helm은 마스터에서 직접 실행하므로 필수는 아님
-resource "null_resource" "fetch_kubeconfig" {
-  count      = var.enable_argocd ? 0 : 0
-  depends_on = [null_resource.k8s_master_init]
 }
 
 # 10. 워커 노드 조인
