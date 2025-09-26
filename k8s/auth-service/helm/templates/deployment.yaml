@@ -41,20 +41,21 @@ spec:
         env:
 {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
+            {{- if kindIs "map" $value }}
+            {{- toYaml $value | nindent 12 }}
+            {{- else }}
             value: {{ $value | quote }}
+            {{- end }}
 {{- end }}
-        envFrom:
-          - secretRef:
-              name: auth-secrets
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
         {{- with .Values.livenessProbe }}
         livenessProbe:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        {{- with .Values.readinessProbe }}
+        {{- if and .Values.readinessProbe (ne .Values.readinessProbe nil) }}
         readinessProbe:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
         {{- end }}
 {{- if .Values.resources }}
         resources:

@@ -15,6 +15,7 @@
 
 # Kubernetes 시크릿 파일
 /k8s/auth-service/auth-service-secret.yaml
+/k8s/auth-service/helm/values.yaml
 
 # 포트포워딩 PID 파일
 .port-forward/
