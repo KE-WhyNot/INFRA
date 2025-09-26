@@ -52,9 +52,9 @@ spec:
         livenessProbe:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        {{- with .Values.readinessProbe }}
+        {{- if and .Values.readinessProbe (ne .Values.readinessProbe nil) }}
         readinessProbe:
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
         {{- end }}
 {{- if .Values.resources }}
         resources:

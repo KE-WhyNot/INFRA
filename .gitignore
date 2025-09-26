@@ -12,5 +12,6 @@
 .env.local
 
 /k8s/auth-service/auth-service-secret.yaml
+/k8s/auth-service/helm/values.yaml
 
 .port-forward/
