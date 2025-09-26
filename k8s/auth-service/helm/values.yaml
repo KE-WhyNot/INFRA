@@ -40,7 +40,7 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   hosts:
-    - host: auth.example.com
+    - host: auth.youth-fi.com
       paths:
         - path: /
           pathType: Prefix
