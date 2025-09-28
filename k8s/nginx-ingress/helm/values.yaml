@@ -8,7 +8,7 @@ image:
 # Service configuration
 service:
   type: LoadBalancer
-  externalIPs: []  # LoadBalancer가 자동으로 할당
+  externalIPs: ["210.109.55.203"]  # 수동으로 Floating IP 설정
   ports:
     - name: http
       port: 80
@@ -18,12 +18,7 @@ service:
       port: 443
       targetPort: 443
       protocol: TCP
-  annotations:
-    # OpenStack LoadBalancer 설정 (카카오클라우드)
-    openstack.org/load-balancer-provider: octavia
-    openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-    openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-    service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+  annotations: {}
 
 # Chart metadata
 name: nginx-ingress
@@ -32,19 +27,14 @@ component: ingress-controller
 controller:
   service:
     type: LoadBalancer
-    externalIPs: []  # LoadBalancer가 자동으로 할당
+    externalIPs: ["210.109.55.203"]  # 수동으로 Floating IP 설정
     ports:
       http: 80
       https: 443
     nodePorts:
       http: 31030
       https: 32285
-    annotations:
-      # OpenStack LoadBalancer 설정 (카카오클라우드)
-      openstack.org/load-balancer-provider: octavia
-      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+    annotations: {}
   
   # 리소스 설정
   resources:
