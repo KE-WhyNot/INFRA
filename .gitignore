@@ -1,6 +1,9 @@
+# IDE 및 에디터 설정
 .idea/
 .vscode/
 .DS_Store
+
+# 환경 변수 파일
 .env
 .env.local
 .env.development.local
@@ -9,10 +12,11 @@
 .env.development
 .env.test
 .env.production
-.env.local
 
+# Kubernetes 시크릿 파일
 /k8s/auth-service/auth-service-secret.yaml
 /k8s/auth-service/helm/values.yaml
+
 
 .port-forward/
 
@@ -20,3 +24,51 @@
 *.tfstate
 *.tfstate.*
 .terraform/
+
+# 포트포워딩 PID 파일
+.port-forward/
+
+# Terraform 관련 파일
+terraform/oci/terraform.tfvars
+terraform/oci/terraform.tfvars.json
+terraform/oci/.terraform/
+terraform/oci/.terraform.lock.hcl
+terraform/oci/terraform.tfstate
+terraform/oci/terraform.tfstate.backup
+terraform/oci/terraform.tfstate.*
+terraform/oci/crash.log
+terraform/oci/crash.*.log
+terraform/oci/*.tfplan
+terraform/oci/*.tfplan.*
+
+# Kubernetes 설정 파일 (민감한 정보 포함)
+~/.kube/
+.kube/
+kubeconfig*
+*.kubeconfig
+
+# OCI 관련 파일
+~/.oci/
+.oci/
+oci_api_key.pem
+oci_api_key_public.pem
+oci_config
+
+# 로그 파일
+*.log
+logs/
+
+# 임시 파일
+*.tmp
+*.temp
+*~
+
+# 백업 파일
+*.bak
+*.backup
+
+# 압축 파일
+*.zip
+*.tar.gz
+*.tar.bz2
+
