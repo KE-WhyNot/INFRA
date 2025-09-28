@@ -1,3 +1,18 @@
+# Service configuration
+service:
+  type: LoadBalancer
+  externalIPs: ["210.109.55.203"]  # OCI Floating IP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+  annotations: {}
+
 controller:
   service:
     type: LoadBalancer
