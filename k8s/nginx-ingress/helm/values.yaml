@@ -7,23 +7,20 @@ image:
 
 # Service configuration
 service:
-  type: LoadBalancer
+  type: NodePort
   externalIPs: ["210.109.55.203"]  # OCI Floating IP
   ports:
     - name: http
       port: 80
       targetPort: 80
       protocol: TCP
+      nodePort: 31030
     - name: https
       port: 443
       targetPort: 443
       protocol: TCP
-  annotations:
-    # OpenStack LoadBalancer 설정 (카카오클라우드)
-    openstack.org/load-balancer-provider: octavia
-    openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-    openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-    service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+      nodePort: 32285
+  annotations: {}
 
 # Chart metadata
 name: nginx-ingress
@@ -31,7 +28,7 @@ component: ingress-controller
 
 controller:
   service:
-    type: LoadBalancer
+    type: NodePort
     externalIPs: ["210.109.55.203"]  # OCI Floating IP
     ports:
       http: 80
@@ -39,12 +36,7 @@ controller:
     nodePorts:
       http: 31030
       https: 32285
-    annotations:
-      # OpenStack LoadBalancer 설정 (카카오클라우드)
-      openstack.org/load-balancer-provider: octavia
-      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+    annotations: {}
   
   # 리소스 설정
   resources:
