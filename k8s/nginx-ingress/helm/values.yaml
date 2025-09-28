@@ -1,68 +1,28 @@
-# Default values for nginx-ingress
-name: nginx-ingress
-component: ingress-controller
-partOf: infrastructure
+controller:
+  service:
+    type: LoadBalancer
+    externalIPs: ["210.109.82.109"]  # 스크립트에서 자동으로 업데이트됨
+    ports:
+      http: 80
+      https: 443
+    nodePorts:
+      http: 31030
+      https: 32285
+  
+  # 리소스 설정
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
 
-# Image configuration
-image:
-  registry: ""
-  repository: k8s.gcr.io/ingress-nginx/controller
-  tag: "v1.8.1"
-
-# Replica count
-replicaCount: 2
-
-# Deployment strategy
-strategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxSurge: 1
-    maxUnavailable: 1
-
-# Service configuration
-service:
+# IngressClass 설정
+ingressClassResource:
   enabled: true
-  type: LoadBalancer
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-      name: http
-    - port: 443
-      targetPort: 443
-      protocol: TCP
-      name: https
-
-# ConfigMap configuration
-configMap:
-  enabled: true
-  data:
-    # Nginx configuration
-    proxy-body-size: "10m"
-    proxy-read-timeout: "600"
-    proxy-send-timeout: "600"
-    client-max-body-size: "10m"
-    # SSL configuration
-    ssl-protocols: "TLSv1.2 TLSv1.3"
-    ssl-ciphers: "ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384"
-    # Rate limiting
-    rate-limit: "100"
-    rate-limit-window: "1m"
-    # Logging
-    log-format-upstream: '{"time": "$time_iso8601", "remote_addr": "$proxy_protocol_addr", "x_forwarded_for": "$proxy_add_x_forwarded_for", "request_id": "$req_id", "remote_user": "$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status": $status, "vhost": "$host", "request_proto": "$server_protocol", "path": "$uri", "request_query": "$args", "request_length": $request_length, "duration": $request_time,"method": "$request_method", "http_referrer": "$http_referer", "http_user_agent": "$http_user_agent", "upstream_addr": "$upstream_addr", "upstream_status": "$upstream_status", "upstream_response_time": "$upstream_response_time", "upstream_response_length": "$upstream_response_length"}'
-
-# Resources
-resources:
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 512Mi
-
-# Node selector for ingress nodes
-nodeSelector:
-  kubernetes.io/os: linux
+  name: nginx
+  default: true
 
 # Tolerations
 tolerations:
