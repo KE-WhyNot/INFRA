@@ -15,3 +15,8 @@
 /k8s/auth-service/helm/values.yaml
 
 .port-forward/
+
+.terraform.*
+*.tfstate
+*.tfstate.*
+.terraform/

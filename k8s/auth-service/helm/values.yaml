@@ -38,14 +38,18 @@ ingress:
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: auth.youth-fi.com
+    - host: ""  # 빈 문자열 = 모든 호스트 허용
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-  tls: []
+  tls:
+    - hosts:
+        - auth.youth-fi.com
+      secretName: auth-tls
 
 # ConfigMap configuration
 configMap:
