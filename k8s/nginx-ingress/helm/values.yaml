@@ -7,17 +7,19 @@ image:
 
 # Service configuration
 service:
-  type: LoadBalancer
-  externalIPs: ["210.109.55.203"]  # 수동으로 Floating IP 설정
+  type: NodePort
+  externalIPs: []  # NodePort 방식 사용
   ports:
     - name: http
       port: 80
       targetPort: 80
       protocol: TCP
+      nodePort: 32058
     - name: https
       port: 443
       targetPort: 443
       protocol: TCP
+      nodePort: 30899
   annotations: {}
 
 # Chart metadata
@@ -26,14 +28,14 @@ component: ingress-controller
 
 controller:
   service:
-    type: LoadBalancer
-    externalIPs: ["210.109.55.203"]  # 수동으로 Floating IP 설정
+    type: NodePort
+    externalIPs: []  # NodePort 방식 사용
     ports:
       http: 80
       https: 443
     nodePorts:
-      http: 31030
-      https: 32285
+      http: 32058
+      https: 30899
     annotations: {}
   
   # 리소스 설정
