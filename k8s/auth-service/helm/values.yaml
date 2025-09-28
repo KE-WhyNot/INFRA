@@ -41,7 +41,12 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: ""  # 빈 문자열 = 모든 호스트 허용
+    - host: "auth.youth-fi.com"  # Cloudflare 도메인
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: 80
+    - host: ""  # 빈 문자열 = 모든 호스트 허용 (개발용)
       paths:
         - path: /
           pathType: Prefix
