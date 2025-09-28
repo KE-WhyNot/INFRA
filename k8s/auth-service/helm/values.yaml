@@ -40,12 +40,16 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
   hosts:
-    - host: auth.youth-fi.com
+    - host: "auth.youth-fi.com"  # Cloudflare 도메인
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-  tls: []
+    - host: ""  # 빈 문자열 = 모든 호스트 허용 (개발용)
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: 80
 
 # ConfigMap configuration
 configMap:

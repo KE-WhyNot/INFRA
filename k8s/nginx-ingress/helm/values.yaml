@@ -1,70 +1,67 @@
-# Default values for nginx-ingress
-name: nginx-ingress
-component: ingress-controller
-partOf: infrastructure
-
 # Image configuration
 image:
-  registry: ""
-  repository: k8s.gcr.io/ingress-nginx/controller
-  tag: "v1.8.1"
-
-# Replica count
-replicaCount: 2
-
-# Deployment strategy
-strategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxSurge: 1
-    maxUnavailable: 1
+  registry: registry.k8s.io
+  repository: ingress-nginx/controller
+  tag: "v1.9.4"
+  pullPolicy: IfNotPresent
 
 # Service configuration
 service:
-  enabled: true
   type: LoadBalancer
+  externalIPs: []  # LoadBalancer가 자동으로 할당
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 80
       protocol: TCP
-      name: http
-    - port: 443
+    - name: https
+      port: 443
       targetPort: 443
       protocol: TCP
-      name: https
+  annotations:
+    # OpenStack LoadBalancer 설정 (카카오클라우드)
+    openstack.org/load-balancer-provider: octavia
+    openstack.org/load-balancer-floating-network-id: "EXTERNAL"
+    openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
+    service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
 
-# ConfigMap configuration
-configMap:
+# Chart metadata
+name: nginx-ingress
+component: ingress-controller
+
+controller:
+  service:
+    type: LoadBalancer
+    externalIPs: []  # LoadBalancer가 자동으로 할당
+    ports:
+      http: 80
+      https: 443
+    nodePorts:
+      http: 32058
+      https: 30899
+    annotations:
+      # OpenStack LoadBalancer 설정 (카카오클라우드)
+      openstack.org/load-balancer-provider: octavia
+      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
+      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
+      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+  
+  # 리소스 설정
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# IngressClass 설정
+ingressClassResource:
   enabled: true
-  data:
-    # Nginx configuration
-    proxy-body-size: "10m"
-    proxy-read-timeout: "600"
-    proxy-send-timeout: "600"
-    client-max-body-size: "10m"
-    # SSL configuration
-    ssl-protocols: "TLSv1.2 TLSv1.3"
-    ssl-ciphers: "ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384"
-    # Rate limiting
-    rate-limit: "100"
-    rate-limit-window: "1m"
-    # Logging
-    log-format-upstream: '{"time": "$time_iso8601", "remote_addr": "$proxy_protocol_addr", "x_forwarded_for": "$proxy_add_x_forwarded_for", "request_id": "$req_id", "remote_user": "$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status": $status, "vhost": "$host", "request_proto": "$server_protocol", "path": "$uri", "request_query": "$args", "request_length": $request_length, "duration": $request_time,"method": "$request_method", "http_referrer": "$http_referer", "http_user_agent": "$http_user_agent", "upstream_addr": "$upstream_addr", "upstream_status": "$upstream_status", "upstream_response_time": "$upstream_response_time", "upstream_response_length": "$upstream_response_length"}'
+  name: nginx
+  default: true
 
-# Resources
-resources:
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
-    cpu: 500m
-    memory: 512Mi
-
-# Node selector for ingress nodes
-nodeSelector:
-  kubernetes.io/os: linux
-
-# Tolerations
+# Tolerations - 마스터 노드에서 실행 허용
 tolerations:
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
@@ -72,6 +69,10 @@ tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
+
+# NodeSelector - 마스터 노드에서만 실행
+nodeSelector:
+  node-role.kubernetes.io/control-plane: ""
 
 # Affinity for high availability
 affinity:
@@ -146,3 +147,12 @@ readinessProbe:
 
 # Ingress class
 ingressClass: nginx
+
+# Global SSL redirect 설정 비활성화 (Cloudflare에서 TLS 처리)
+controller:
+  config:
+    ssl-redirect: "false"
+    # HTTPS 처리 설정 (Cloudflare DNS 전용 모드 대응)
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    use-proxy-protocol: "false"

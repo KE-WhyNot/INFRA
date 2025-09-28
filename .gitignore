@@ -17,6 +17,14 @@
 /k8s/auth-service/auth-service-secret.yaml
 /k8s/auth-service/helm/values.yaml
 
+
+.port-forward/
+
+.terraform.*
+*.tfstate
+*.tfstate.*
+.terraform/
+
 # 포트포워딩 PID 파일
 .port-forward/
 
@@ -63,3 +71,4 @@ logs/
 *.zip
 *.tar.gz
 *.tar.bz2
+
