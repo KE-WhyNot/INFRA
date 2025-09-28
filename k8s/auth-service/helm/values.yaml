@@ -38,8 +38,7 @@ ingress:
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
   hosts:
     - host: "auth.youth-fi.com"  # Cloudflare 도메인
       paths:
@@ -51,10 +50,6 @@ ingress:
         - path: /
           pathType: Prefix
           servicePort: 80
-  tls:
-    - hosts:
-        - auth.youth-fi.com
-      secretName: auth-tls
 
 # ConfigMap configuration
 configMap:
