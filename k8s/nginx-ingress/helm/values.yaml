@@ -152,3 +152,7 @@ ingressClass: nginx
 controller:
   config:
     ssl-redirect: "false"
+    # HTTPS 처리 설정 (Cloudflare DNS 전용 모드 대응)
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    use-proxy-protocol: "false"
