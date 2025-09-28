@@ -7,23 +7,20 @@ image:
 
 # Service configuration
 service:
-  type: LoadBalancer
-  externalIPs: []  # LoadBalancer가 자동으로 할당
+  type: NodePort
+  externalIPs: []  # NodePort 방식 사용
   ports:
     - name: http
       port: 80
       targetPort: 80
       protocol: TCP
+      nodePort: 32058
     - name: https
       port: 443
       targetPort: 443
       protocol: TCP
-  annotations:
-    # OpenStack LoadBalancer 설정 (카카오클라우드)
-    openstack.org/load-balancer-provider: octavia
-    openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-    openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-    service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+      nodePort: 30899
+  annotations: {}
 
 # Chart metadata
 name: nginx-ingress
@@ -31,20 +28,15 @@ component: ingress-controller
 
 controller:
   service:
-    type: LoadBalancer
-    externalIPs: []  # LoadBalancer가 자동으로 할당
+    type: NodePort
+    externalIPs: []  # NodePort 방식 사용
     ports:
       http: 80
       https: 443
     nodePorts:
       http: 32058
       https: 30899
-    annotations:
-      # OpenStack LoadBalancer 설정 (카카오클라우드)
-      openstack.org/load-balancer-provider: octavia
-      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
-      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
-      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+    annotations: {}
   
   # 리소스 설정
   resources:
@@ -61,7 +53,7 @@ ingressClassResource:
   name: nginx
   default: true
 
-# Tolerations
+# Tolerations - 마스터 노드에서 실행 허용
 tolerations:
   - key: node-role.kubernetes.io/control-plane
     operator: Exists
@@ -69,6 +61,10 @@ tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
+
+# NodeSelector - 마스터 노드에서만 실행
+nodeSelector:
+  node-role.kubernetes.io/control-plane: ""
 
 # Affinity for high availability
 affinity:
