@@ -1,0 +1,32 @@
+controller:
+  replicaCount: 1
+  service:
+    enabled: true
+    type: LoadBalancer
+    annotations:
+      # Octavia LoadBalancer 설정
+      openstack.org/load-balancer-provider: octavia
+      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
+      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
+      # LoadBalancer 클래스 설정
+      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
+  config:
+    use-proxy-protocol: "false"
+    compute-full-forwarded-for: "true"
+    use-forwarded-headers: "true"
+    enable-ssl-passthrough: "true"
+  resources:
+    limits:
+      cpu: 600m
+      memory: 1Gi
+    requests:
+      cpu: 300m
+      memory: 512Mi
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  controller:
+

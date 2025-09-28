@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: default
+  source:
+    repoURL: registry-1.docker.io/bitnamicharts
+    chart: mysql
+    targetRevision: "14.0.3"
+    helm:
+      parameters:
+        - name: primary.persistence.enabled
+          value: "false"
+        - name: persistence.enabled
+          value: "false"
+        - name: primary.resources.requests.memory
+          value: "128Mi"
+        - name: primary.resources.requests.cpu
+          value: "100m"
+        - name: auth.existingSecret
+          value: "mysql-secrets"
+        - name: auth.database
+          value: "auth"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mysql
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
