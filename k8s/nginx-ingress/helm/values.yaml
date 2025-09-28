@@ -1,7 +1,7 @@
 controller:
   service:
     type: LoadBalancer
-    externalIPs: ["210.109.82.109"]  # 스크립트에서 자동으로 업데이트됨
+    externalIPs: ["210.109.55.203"]  # OCI Floating IP
     ports:
       http: 80
       https: 443
