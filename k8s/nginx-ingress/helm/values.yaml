@@ -18,7 +18,12 @@ service:
       port: 443
       targetPort: 443
       protocol: TCP
-  annotations: {}
+  annotations:
+    # OpenStack LoadBalancer 설정 (카카오클라우드)
+    openstack.org/load-balancer-provider: octavia
+    openstack.org/load-balancer-floating-network-id: "EXTERNAL"
+    openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
+    service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
 
 # Chart metadata
 name: nginx-ingress
@@ -34,6 +39,12 @@ controller:
     nodePorts:
       http: 31030
       https: 32285
+    annotations:
+      # OpenStack LoadBalancer 설정 (카카오클라우드)
+      openstack.org/load-balancer-provider: octavia
+      openstack.org/load-balancer-floating-network-id: "EXTERNAL"
+      openstack.org/load-balancer-floating-subnet-id: "EXTERNAL"
+      service.beta.kubernetes.io/openstack-load-balancer-class: "octavia"
   
   # 리소스 설정
   resources:
