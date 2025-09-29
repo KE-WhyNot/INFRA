@@ -1,0 +1,31 @@
+# Terraform 파일
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+*.tfplan.*
+
+# Terraform 디렉토리
+.terraform/
+.terraform.lock.hcl
+
+# 환경변수 파일
+.env
+.env.local
+.env.*.local
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# key
+/keys/*
+kubeconfig/*
+/secret/*
