@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/parkyoungdu/INFRA.git
+    path: k8s/redis/helm
+    targetRevision: develop
+    helm:
+      values: |
+        networkPolicy:
+          enabled: true
+          ingress:
+            - from:
+                - namespaceSelector:
+                    matchLabels:
+                      name: auth-service
+              ports:
+                - port: 6379
+                  protocol: TCP
+          egress: []
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redis
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
