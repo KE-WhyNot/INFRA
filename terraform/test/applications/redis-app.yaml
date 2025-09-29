@@ -8,17 +8,22 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: registry-1.docker.io/bitnamicharts
-    chart: redis
-    targetRevision: "21.2.14"
+    repoURL: https://github.com/parkyoungdu/INFRA.git
+    path: k8s/redis/helm
+    targetRevision: develop
     helm:
-      parameters:
-        - name: architecture
-          value: "standalone"
-        - name: auth.enabled
-          value: "false"  # Redis 비밀번호 없으므로 인증 비활성화
-        - name: master.service.type
-          value: "ClusterIP"
+      values: |
+        networkPolicy:
+          enabled: true
+          ingress:
+            - from:
+                - namespaceSelector:
+                    matchLabels:
+                      name: auth-service
+              ports:
+                - port: 6379
+                  protocol: TCP
+          egress: []
   destination:
     server: https://kubernetes.default.svc
     namespace: redis

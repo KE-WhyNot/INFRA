@@ -123,8 +123,15 @@ podDisruptionBudget:
 
 # Network policy
 networkPolicy:
-  enabled: false
-  ingress: []
+  enabled: true
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: auth-service
+      ports:
+        - port: 6379
+          protocol: TCP
   egress: []
 
 # Service account
