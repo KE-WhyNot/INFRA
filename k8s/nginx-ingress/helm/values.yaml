@@ -156,3 +156,10 @@ controller:
     use-forwarded-headers: "true"
     compute-full-forwarded-for: "true"
     use-proxy-protocol: "false"
+    # 전역 CORS 설정
+    enable-cors: "true"
+    cors-allow-origin: "*"
+    cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    cors-allow-credentials: "true"
+    cors-max-age: "86400"
