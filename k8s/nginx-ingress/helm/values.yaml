@@ -8,7 +8,7 @@ image:
 # Service configuration
 service:
   type: LoadBalancer
-  externalIPs: []  # LoadBalancer가 자동으로 할당
+  externalIPs: ["210.109.55.201"]  # 수동으로 External IP 할당
   ports:
     - name: http
       port: 80
@@ -32,7 +32,7 @@ component: ingress-controller
 controller:
   service:
     type: LoadBalancer
-    externalIPs: []  # LoadBalancer가 자동으로 할당
+    externalIPs: ["210.109.55.201"]  # 수동으로 External IP 할당
     ports:
       http: 80
       https: 443
