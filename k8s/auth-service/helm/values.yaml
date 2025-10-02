@@ -10,7 +10,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/auth-service
-  tag: "e0c7259bcd6e04f58d01c1fe86d23ff24d17e6e2"  # This will be updated by CI/CD
+  tag: "00962a2be12f16818067b9bcc07707b85688da98"  # This will be updated by CI/CD
 
 # Replica count
 replicaCount: 2
