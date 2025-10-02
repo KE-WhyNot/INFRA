@@ -10,7 +10,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/auth-service
-  tag: "e0c7259bcd6e04f58d01c1fe86d23ff24d17e6e2"  # This will be updated by CI/CD
+  tag: "00962a2be12f16818067b9bcc07707b85688da98"  # This will be updated by CI/CD
 
 # Replica count
 replicaCount: 2
@@ -41,7 +41,7 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     # CORS 설정
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin-list: "https://auth.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8082"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://auth.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8082"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-user-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
