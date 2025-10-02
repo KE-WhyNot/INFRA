@@ -52,11 +52,6 @@ ingress:
         - path: /
           pathType: Prefix
           servicePort: 80
-    - host: ""  # 빈 문자열 = 모든 호스트 허용 (개발용)
-      paths:
-        - path: /
-          pathType: Prefix
-          servicePort: 80
 
 # ConfigMap configuration
 configMap:
@@ -73,6 +68,7 @@ secret:
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_FORWARD_HEADERS_STRATEGY: "framework"
   MANAGEMENT_SERVER_PORT: "8080"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
