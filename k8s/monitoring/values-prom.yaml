@@ -1,0 +1,71 @@
+# kube-prometheus-stack values.yaml
+# OKE 환경에 최적화된 설정
+
+# 기본 규칙 생성
+defaultRules:
+  create: true
+
+# kube-state-metrics 활성화
+kube-state-metrics:
+  enabled: true
+
+# node-exporter 활성화
+prometheus-node-exporter:
+  enabled: true
+
+# Prometheus 설정
+prometheus:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          storageClassName: oci-bv
+          resources:
+            requests:
+              storage: 20Gi
+    resources:
+      requests: 
+        cpu: 200m
+        memory: 1Gi
+      limits:   
+        cpu: "1"
+        memory: 3Gi
+
+# Alertmanager 비활성화
+alertmanager:
+  enabled: false
+
+# Grafana 설정
+grafana:
+  enabled: true
+  admin:
+    existingSecret: grafana-admin  # Secret 생성
+    userKey: admin-user
+    passwordKey: admin-password
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: oci-bv
+    accessModes: ["ReadWriteOnce"]
+    size: 10Gi
+  service:
+    type: ClusterIP
+  env:
+    GF_SERVER_ROOT_URL: "https://grafana.youth-fi.com"  # 외부 도메인
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: 
+      - "grafana.youth-fi.com"
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
