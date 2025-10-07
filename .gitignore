@@ -16,7 +16,9 @@
 # Kubernetes 시크릿 파일
 /k8s/auth-service/auth-service-secret.yaml
 /k8s/auth-service/helm/values.yaml
-
+/k8s/policy-service/policy-service-secret.yaml
+**/*-secret.yaml
+**/*-secrets.yaml
 
 .port-forward/
 
@@ -71,4 +73,3 @@ logs/
 *.zip
 *.tar.gz
 *.tar.bz2
-
