@@ -1,0 +1,38 @@
+# Derived from k8s/argocd/values.yaml and adjusted for cloud deployment
+
+global:
+  image:
+    tag: v2.11.7
+
+configs:
+  params:
+    server.insecure: "true"  # HTTP (no TLS) for initial access
+
+server:
+  service:
+    type: NodePort
+    nodePortHttp: 30080
+    servicePortHttp: 80
+  ingress:
+    enabled: false
+  extraArgs: []
+
+controller:
+  resources: {}
+
+repoServer:
+  resources: {}
+
+applicationSet:
+  resources: {}
+
+dex:
+  enabled: false
+
+redis:
+  enabled: true
+
+notifications:
+  enabled: false
+
+

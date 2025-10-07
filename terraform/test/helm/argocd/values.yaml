@@ -1,0 +1,119 @@
+# ArgoCD 공식 Helm Chart 커스텀 Values
+# 포트 8000으로 변경 및 우리 서비스들 자동 등록
+
+global:
+  # 도메인 설정
+  domain: localhost:8000
+
+# 서버 설정
+server:
+  # 서비스 설정
+  service:
+    type: LoadBalancer
+    servicePortHttp: 8000
+    servicePortHttps: 8443
+
+  # Ingress 비활성화 (LoadBalancer 사용)
+  ingress:
+    enabled: false
+
+  # 추가 설정
+  extraArgs:
+    - --insecure
+
+  # 리소스 제한
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# Application Controller 설정
+controller:
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# Repository Server 설정
+repoServer:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+# Redis 설정
+redis:
+  enabled: true  # Redis 캐싱 활성화
+
+# Dex 서버 설정 (인증)
+dex:
+  enabled: false  # 개발환경에서는 비활성화
+
+# Notifications Controller 설정
+notifications:
+  enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# ApplicationSet Controller 설정
+applicationSet:
+  enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# 설정 관리
+configs:
+  # 매개변수 설정
+  params:
+    server.insecure: true
+    server.disable.auth: false
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    # 캐시 비활성화 설정
+    timeout.hard.reconciliation: 1s  # 캐시 타임아웃을 1초로 설정 (거의 비활성화)
+    timeout.reconciliation: 30s      # 일반 reconciliation 타임아웃 단축
+
+  # 저장소 설정
+  repositories:
+    infra-repo:
+      type: git
+      url: https://github.com/KE-WhyNot/INFRA
+      name: infra-repo
+    bitnami-oci:
+      type: helm
+      name: bitnami-oci
+      url: oci://registry-1.docker.io/bitnamicharts
+      enableOCI: "true"
+
+  # RBAC 설정
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      p, role:admin, applications, *, */*, allow
+      p, role:admin, certificates, *, *, allow
+      p, role:admin, clusters, *, *, allow
+      p, role:admin, repositories, *, *, allow
+      p, role:admin, projects, *, *, allow
+      g, argocd-admins, role:admin
+
+# 초기 관리자 계정 설정 유지
+  config:
+    url: http://localhost:8000

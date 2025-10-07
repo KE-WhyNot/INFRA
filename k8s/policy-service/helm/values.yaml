@@ -1,0 +1,168 @@
+# k8s/policy-service/helm/values.yaml
+name: policy-service
+component: policy-service
+partOf: microservices
+
+image:
+  registry: ""
+  repository: docker.io/9september/policy-service
+  tag: "latest"   # CI
+
+replicaCount: 2
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://policy.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8082"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-user-Id"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-max-age: "86400"
+  hosts:
+    - host: "policy.youth-fi.com"
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: 80
+
+configMap:
+  enabled: true
+  data:
+    SPRING_PROFILES_ACTIVE: "prod"
+    SERVER_PORT: "8080"
+    LOGGING_LEVEL_ROOT: "INFO"
+
+secret:
+  enabled: false
+
+env:
+  SPRING_PROFILES_ACTIVE: "prod"
+  SERVER_PORT: "8080"
+  SERVER_FORWARD_HEADERS_STRATEGY: "framework"
+  MANAGEMENT_SERVER_PORT: "8080"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
+  MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+
+  # From Secret: policy-secrets (PostgreSQL)
+  spring.datasource.url:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.datasource.url }
+  spring.datasource.username:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.datasource.username }
+  spring.datasource.password:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.datasource.password }
+  spring.datasource.driver-class-name:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.datasource.driver-class-name }
+
+  # Redis 설정
+  spring.data.redis.host:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.data.redis.host }
+  spring.data.redis.port:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.data.redis.port }
+  spring.data.redis.password:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.data.redis.password }
+  spring.data.redis.database:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: spring.data.redis.database }
+
+  # JWT
+  jwt.key:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: jwt.key }
+  jwt.access.expiration:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: jwt.access.expiration }
+  jwt.refresh.expiration:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: jwt.refresh.expiration }
+
+  # Auth Service 연동
+  auth.service.url:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: auth.service.url }
+  auth.service.validate-token-endpoint:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: auth.service.validate-token-endpoint }
+
+  # Policy 설정
+  policy.cache.ttl:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: policy.cache.ttl }
+  policy.cache.max-size:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: policy.cache.max-size }
+
+resources:
+  limits: { cpu: 300m, memory: 512Mi }
+  requests: { cpu: 100m, memory: 256Mi }
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
+startupProbe:
+  httpGet: { path: /actuator/health, port: 8080 }
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  httpGet: { path: /actuator/health, port: 8080 }
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 10
+  failureThreshold: 12
+
+readinessProbe:
+  httpGet: { path: /actuator/health, port: 8080 }
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+
+serviceAccount:
+  create: true
+  name: ""
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop: [ "ALL" ]

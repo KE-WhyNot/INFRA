@@ -2,21 +2,29 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "common.serviceAccountName" . }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "ingress-controller" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "ingress-controller" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 rules:
 - apiGroups: [""]
   resources: ["configmaps", "endpoints", "nodes", "pods", "secrets", "namespaces"]
-  verbs: ["list", "watch"]
+  verbs: ["get", "list", "watch"]
 - apiGroups: [""]
   resources: ["nodes"]
   verbs: ["get"]
@@ -35,19 +43,29 @@ rules:
 - apiGroups: ["networking.k8s.io"]
   resources: ["ingressclasses"]
   verbs: ["get", "list", "watch"]
+- apiGroups: ["discovery.k8s.io"]
+  resources: ["endpointslices"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-    {{- include "common.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Values.name | default .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    app.kubernetes.io/component: {{ .Values.component | default "ingress-controller" }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "common.fullname" . }}
+  name: {{ .Release.Name }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "common.serviceAccountName" . }}
+  name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 {{- end }}
