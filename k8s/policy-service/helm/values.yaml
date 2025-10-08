@@ -95,37 +95,9 @@ env:
   DB_POOL_TIMEOUT: "30"
   DB_POOL_RECYCLE: "3600"
 
-
-
 resources:
   limits: { cpu: 300m, memory: 512Mi }
   requests: { cpu: 100m, memory: 256Mi }
-
-podAnnotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "8080"
-  prometheus.io/path: "/metrics"
-
-startupProbe:
-  httpGet: { path: /health, port: 8080 }
-  initialDelaySeconds: 30
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 30
-
-livenessProbe:
-  httpGet: { path: /health/live, port: 8080 }
-  initialDelaySeconds: 60
-  periodSeconds: 30
-  timeoutSeconds: 5
-  failureThreshold: 3
-
-readinessProbe:
-  httpGet: { path: /health/ready, port: 8080 }
-  initialDelaySeconds: 10
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 3
 
 serviceAccount:
   create: true
