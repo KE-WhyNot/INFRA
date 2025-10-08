@@ -48,77 +48,54 @@ ingress:
 configMap:
   enabled: true
   data:
-    SPRING_PROFILES_ACTIVE: "prod"
-    SERVER_PORT: "8080"
-    LOGGING_LEVEL_ROOT: "INFO"
+    ENVIRONMENT: "production"
+    PORT: "8080"
+    LOG_LEVEL: "INFO"
 
 secret:
   enabled: false
 
 env:
-  SPRING_PROFILES_ACTIVE: "prod"
-  SERVER_PORT: "8080"
-  SERVER_FORWARD_HEADERS_STRATEGY: "framework"
-  MANAGEMENT_SERVER_PORT: "8080"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
-  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
-  MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
-  MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+  ENVIRONMENT: "production"
+  PORT: "8080"
+  HOST: "0.0.0.0"
+  LOG_LEVEL: "INFO"
+  RELOAD: "false"
+  
+  # FastAPI 설정
+  APP_NAME: "policy-service"
+  APP_VERSION: "1.0.0"
+  DOCS_URL: "/docs"
+  REDOC_URL: "/redoc"
+  OPENAPI_URL: "/openapi.json"
+  
+  # PostgreSQL 연결 설정 (FastAPI + SQLAlchemy)
+  DATABASE_URL:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.url }
+  DATABASE_USER:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.username }
+  DATABASE_PASSWORD:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.password }
+  DATABASE_HOST:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.host }
+  DATABASE_PORT:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.port }
+  DATABASE_NAME:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: database.name }
+  
+  # SQLAlchemy 연결 풀 설정
+  DB_POOL_SIZE: "10"
+  DB_MAX_OVERFLOW: "20"
+  DB_POOL_TIMEOUT: "30"
+  DB_POOL_RECYCLE: "3600"
 
-  # From Secret: policy-secrets (PostgreSQL)
-  spring.datasource.url:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.url }
-  spring.datasource.username:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.username }
-  spring.datasource.password:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.password }
-  spring.datasource.driver-class-name:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.driver-class-name }
 
-  # Redis 설정
-  spring.data.redis.host:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.host }
-  spring.data.redis.port:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.port }
-  spring.data.redis.password:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.password }
-  spring.data.redis.database:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.database }
-
-  # JWT
-  jwt.key:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.key }
-  jwt.access.expiration:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.access.expiration }
-  jwt.refresh.expiration:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.refresh.expiration }
-
-  # Auth Service 연동
-  auth.service.url:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: auth.service.url }
-  auth.service.validate-token-endpoint:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: auth.service.validate-token-endpoint }
-
-  # Policy 설정
-  policy.cache.ttl:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: policy.cache.ttl }
-  policy.cache.max-size:
-    valueFrom:
-      secretKeyRef: { name: policy-secrets, key: policy.cache.max-size }
 
 resources:
   limits: { cpu: 300m, memory: 512Mi }
@@ -127,28 +104,28 @@ resources:
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "8080"
-  prometheus.io/path: "/actuator/prometheus"
+  prometheus.io/path: "/metrics"
 
 startupProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
-  initialDelaySeconds: 60
+  httpGet: { path: /health, port: 8080 }
+  initialDelaySeconds: 30
   periodSeconds: 10
-  timeoutSeconds: 10
+  timeoutSeconds: 5
   failureThreshold: 30
 
 livenessProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
+  httpGet: { path: /health/live, port: 8080 }
   initialDelaySeconds: 60
-  periodSeconds: 10
-  timeoutSeconds: 10
-  failureThreshold: 12
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
 
 readinessProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
+  httpGet: { path: /health/ready, port: 8080 }
   initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 5
-  failureThreshold: 6
+  failureThreshold: 3
 
 serviceAccount:
   create: true
