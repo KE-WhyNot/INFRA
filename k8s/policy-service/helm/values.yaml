@@ -2,20 +2,16 @@
 name: policy-service
 component: policy-service
 partOf: microservices
-
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "latest"   # CI
-
+  tag: "ad29cf64b758d9d637ae8a91c6e9073c71a19f75" # CI
 replicaCount: 2
-
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 service:
   enabled: true
   type: ClusterIP
@@ -24,7 +20,6 @@ service:
       targetPort: 8080
       protocol: TCP
       name: http
-
 ingress:
   enabled: true
   className: nginx
@@ -44,17 +39,14 @@ ingress:
         - path: /
           pathType: Prefix
           servicePort: 80
-
 configMap:
   enabled: true
   data:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8080"
     LOGGING_LEVEL_ROOT: "INFO"
-
 secret:
   enabled: false
-
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8080"
@@ -64,105 +56,92 @@ env:
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
   MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
   MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
-
   # From Secret: policy-secrets (PostgreSQL)
   spring.datasource.url:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.url }
+      secretKeyRef: {name: policy-secrets, key: spring.datasource.url}
   spring.datasource.username:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.username }
+      secretKeyRef: {name: policy-secrets, key: spring.datasource.username}
   spring.datasource.password:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.password }
+      secretKeyRef: {name: policy-secrets, key: spring.datasource.password}
   spring.datasource.driver-class-name:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.datasource.driver-class-name }
-
+      secretKeyRef: {name: policy-secrets, key: spring.datasource.driver-class-name}
   # Redis 설정
   spring.data.redis.host:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.host }
+      secretKeyRef: {name: policy-secrets, key: spring.data.redis.host}
   spring.data.redis.port:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.port }
+      secretKeyRef: {name: policy-secrets, key: spring.data.redis.port}
   spring.data.redis.password:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.password }
+      secretKeyRef: {name: policy-secrets, key: spring.data.redis.password}
   spring.data.redis.database:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: spring.data.redis.database }
-
+      secretKeyRef: {name: policy-secrets, key: spring.data.redis.database}
   # JWT
   jwt.key:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.key }
+      secretKeyRef: {name: policy-secrets, key: jwt.key}
   jwt.access.expiration:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.access.expiration }
+      secretKeyRef: {name: policy-secrets, key: jwt.access.expiration}
   jwt.refresh.expiration:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: jwt.refresh.expiration }
-
+      secretKeyRef: {name: policy-secrets, key: jwt.refresh.expiration}
   # Auth Service 연동
   auth.service.url:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: auth.service.url }
+      secretKeyRef: {name: policy-secrets, key: auth.service.url}
   auth.service.validate-token-endpoint:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: auth.service.validate-token-endpoint }
-
+      secretKeyRef: {name: policy-secrets, key: auth.service.validate-token-endpoint}
   # Policy 설정
   policy.cache.ttl:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: policy.cache.ttl }
+      secretKeyRef: {name: policy-secrets, key: policy.cache.ttl}
   policy.cache.max-size:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: policy.cache.max-size }
-
+      secretKeyRef: {name: policy-secrets, key: policy.cache.max-size}
 resources:
-  limits: { cpu: 300m, memory: 512Mi }
-  requests: { cpu: 100m, memory: 256Mi }
-
+  limits: {cpu: 300m, memory: 512Mi}
+  requests: {cpu: 100m, memory: 256Mi}
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "8080"
   prometheus.io/path: "/actuator/prometheus"
-
 startupProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
+  httpGet: {path: /actuator/health, port: 8080}
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 10
   failureThreshold: 30
-
 livenessProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
+  httpGet: {path: /actuator/health, port: 8080}
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 10
   failureThreshold: 12
-
 readinessProbe:
-  httpGet: { path: /actuator/health, port: 8080 }
+  httpGet: {path: /actuator/health, port: 8080}
   initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 6
-
 serviceAccount:
   create: true
   name: ""
-
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:
-    drop: [ "ALL" ]
+    drop: ["ALL"]
