@@ -7,6 +7,7 @@ image:
   registry: ""
   repository: docker.io/9september/policy-service
   tag: "ad29cf64b758d9d637ae8a91c6e9073c71a19f75"
+  pullPolicy: IfNotPresent
 
 replicaCount: 2
 
@@ -139,3 +140,20 @@ securityContext:
   runAsUser: 1000
   capabilities:
     drop: [ "ALL" ]
+
+# 추가 설정
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
