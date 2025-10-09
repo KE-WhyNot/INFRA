@@ -6,7 +6,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "latest"   # CI
+  tag: "ad29cf64b758d9d637ae8a91c6e9073c71a19f75"
 
 replicaCount: 2
 
@@ -21,7 +21,7 @@ service:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 8082
       protocol: TCP
       name: http
 
@@ -49,7 +49,7 @@ configMap:
   enabled: true
   data:
     ENVIRONMENT: "production"
-    PORT: "8080"
+    PORT: "8082"
     LOG_LEVEL: "INFO"
 
 secret:
@@ -57,7 +57,7 @@ secret:
 
 env:
   ENVIRONMENT: "production"
-  PORT: "8080"
+  PORT: "8082"
   HOST: "0.0.0.0"
   LOG_LEVEL: "INFO"
   RELOAD: "false"
@@ -69,25 +69,49 @@ env:
   REDOC_URL: "/redoc"
   OPENAPI_URL: "/openapi.json"
   
-  # PostgreSQL 연결 설정 (FastAPI + SQLAlchemy)
+  # 데이터베이스 연결 설정 (policy)
+  PG_DSN:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: PG_DSN }
+  PG_DSN_ASYNC:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC }
   DATABASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.url }
-  DATABASE_USER:
+      secretKeyRef: { name: policy-secrets, key: DATABASE_URL }
+  
+  # 데이터베이스 연결 설정 (finproduct)
+  PG_DSN_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.username }
-  DATABASE_PASSWORD:
+      secretKeyRef: { name: policy-secrets, key: PG_DSN_FIN }
+  PG_DSN_ASYNC_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.password }
-  DATABASE_HOST:
+      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC_FIN }
+  
+  # ETL 설정 (policy)
+  ETL_SOURCE:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.host }
-  DATABASE_PORT:
+      secretKeyRef: { name: policy-secrets, key: ETL_SOURCE }
+  BASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.port }
-  DATABASE_NAME:
+      secretKeyRef: { name: policy-secrets, key: BASE_URL }
+  API_KEY:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: database.name }
+      secretKeyRef: { name: policy-secrets, key: API_KEY }
+  
+  # ETL 설정 (finproduct)
+  BASE_URL_DEPOSIT:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: BASE_URL_DEPOSIT }
+  BASE_URL_SAVING:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: BASE_URL_SAVING }
+  API_KEY_FIN:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: API_KEY_FIN }
+  GEMINI_API_KEY:
+    valueFrom:
+      secretKeyRef: { name: policy-secrets, key: GEMINI_API_KEY }
   
   # SQLAlchemy 연결 풀 설정
   DB_POOL_SIZE: "10"
