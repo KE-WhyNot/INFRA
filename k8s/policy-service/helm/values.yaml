@@ -6,7 +6,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "ad29cf64b758d9d637ae8a91c6e9073c71a19f75"
+  tag: "ea72ab0db826533f8f10de2288eea6ef5dc08f72"
   pullPolicy: IfNotPresent
 
 replicaCount: 2
@@ -40,19 +40,6 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
 
-    nginx.ingress.kubernetes.io/auth-url: "http://auth-service.auth-service.svc.cluster.local/api/auth/verify"
-    nginx.ingress.kubernetes.io/auth-connect-timeout: "10s"
-    nginx.ingress.kubernetes.io/auth-read-timeout: "10s"
-    nginx.ingress.kubernetes.io/auth-send-timeout: "10s"
-    nginx.ingress.kubernetes.io/auth-snippet: |
-      proxy_set_header Authorization $http_authorization;
-      proxy_set_header X-Original-URI $request_uri;
-      proxy_set_header X-Original-Method $request_method;
-      proxy_set_header X-Forwarded-For $remote_addr;
-      proxy_set_header X-User-Id "";
-    nginx.ingress.kubernetes.io/auth-response-headers: "X-User-Id"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Authorization "";
 
   hosts:
     - host: "policy.youth-fi.com"
