@@ -5,7 +5,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "ea72ab0db826533f8f10de2288eea6ef5dc08f72"
+  tag: "38bcefcc1fd761b20ab8bc6ba85b7c1c74a156fa"
   pullPolicy: IfNotPresent
 replicaCount: 2
 strategy:
@@ -34,8 +34,6 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
-
-
   hosts:
     - host: "policy.youth-fi.com"
       paths:
