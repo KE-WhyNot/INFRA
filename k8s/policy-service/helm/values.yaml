@@ -36,9 +36,24 @@ ingress:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://policy.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8082"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-user-Id"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
+
+    nginx.ingress.kubernetes.io/auth-url: "http://auth-service.auth-service.svc.cluster.local/api/auth/verify"
+    nginx.ingress.kubernetes.io/auth-connect-timeout: "10s"
+    nginx.ingress.kubernetes.io/auth-read-timeout: "10s"
+    nginx.ingress.kubernetes.io/auth-send-timeout: "10s"
+    nginx.ingress.kubernetes.io/auth-snippet: |
+      proxy_set_header Authorization $http_authorization;
+      proxy_set_header X-Original-URI $request_uri;
+      proxy_set_header X-Original-Method $request_method;
+      proxy_set_header X-Forwarded-For $remote_addr;
+      proxy_set_header X-User-Id "";
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-User-Id"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Authorization "";
+
   hosts:
     - host: "policy.youth-fi.com"
       paths:
