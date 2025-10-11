@@ -5,23 +5,19 @@
 name: ranking-stream
 component: ranking-stream
 partOf: microservices
-
 # Image configuration
 image:
   registry: ""
   repository: docker.io/9september/ranking-stream
-  tag: "latest"  # This will be updated by CI/CD
-
+  tag: "c19651e2297752036b33c536b485d871785016ca" # This will be updated by CI/CD
 # Replica count
 replicaCount: 1
-
 # Deployment strategy
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 # Service configuration
 service:
   enabled: true
@@ -31,11 +27,9 @@ service:
       targetPort: 8084
       protocol: TCP
       name: http
-
 # Ingress configuration (disabled for stream service)
 ingress:
   enabled: false
-
 # ConfigMap configuration
 configMap:
   enabled: true
@@ -43,18 +37,15 @@ configMap:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8084"
     LOGGING_LEVEL_ROOT: "INFO"
-
 # Secret configuration
 secret:
   enabled: false
-
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8084"
   MANAGEMENT_SERVER_PORT: "8084"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info"
-
   # From Secret: ranking-stream-secrets
   KAFKA_BOOTSTRAP_SERVERS:
     valueFrom:
@@ -71,7 +62,6 @@ env:
       secretKeyRef:
         name: ranking-stream-secrets
         key: KAFKA_PASSWORD
-
 # Resources
 resources:
   limits:
@@ -80,26 +70,21 @@ resources:
   requests:
     cpu: 200m
     memory: 512Mi
-
 # Pod configuration
 podAnnotations: {}
-
 # Health checks disabled for stream service
 startupProbe: null
 livenessProbe: null
 readinessProbe: null
-
 # Service account
 serviceAccount:
   create: true
   name: ""
-
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false
