@@ -5,7 +5,6 @@
 name: notify-service
 component: notify-service
 partOf: microservices
-
 # Image configuration
 image:
   registry: ""
@@ -14,14 +13,12 @@ image:
 
 # Replica count
 replicaCount: 2
-
 # Deployment strategy
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 # Service configuration
 service:
   enabled: true
@@ -31,7 +28,6 @@ service:
       targetPort: 8083
       protocol: TCP
       name: http
-
 # Ingress configuration
 ingress:
   enabled: true
@@ -46,15 +42,12 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
-
-
   hosts:
-    - host: "notify.youth-fi.com"  # Cloudflare 도메인
+    - host: "notify.youth-fi.com" # Cloudflare 도메인
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-
 # ConfigMap configuration
 configMap:
   enabled: true
@@ -62,11 +55,9 @@ configMap:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8083"
     LOGGING_LEVEL_ROOT: "INFO"
-
 # Secret configuration
 secret:
   enabled: false
-
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
@@ -74,6 +65,7 @@ env:
   SERVER_PORT: "8083"
   MANAGEMENT_SERVER_PORT: "8083"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info"
+
 
   # From Secret: notify-secrets
   SPRING_DATASOURCE_URL:
@@ -96,7 +88,6 @@ env:
       secretKeyRef:
         name: notify-secrets
         key: spring.datasource.driver-class-name
-
   # Apache Kafka configuration
   KAFKA_BOOTSTRAP_SERVERS:
     valueFrom:
@@ -118,8 +109,6 @@ env:
       secretKeyRef:
         name: notify-secrets
         key: KAFKA_GROUP_ID
-
-
 # Resources
 resources:
   limits:
@@ -129,24 +118,19 @@ resources:
     cpu: 100m
     memory: 256Mi
 
-
-
-
 # Service account
 serviceAccount:
   create: true
   name: ""
-
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false  # Spring Boot가 임시 파일을 생성할 수 있도록 수정
+  readOnlyRootFilesystem: false # Spring Boot가 임시 파일을 생성할 수 있도록 수정
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:

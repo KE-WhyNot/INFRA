@@ -2,21 +2,17 @@
 name: policy-service
 component: policy-service
 partOf: microservices
-
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "ea72ab0db826533f8f10de2288eea6ef5dc08f72"
+  tag: "38bcefcc1fd761b20ab8bc6ba85b7c1c74a156fa"
   pullPolicy: IfNotPresent
-
 replicaCount: 2
-
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 service:
   enabled: true
   type: ClusterIP
@@ -25,7 +21,6 @@ service:
       targetPort: 8082
       protocol: TCP
       name: http
-
 ingress:
   enabled: true
   className: nginx
@@ -39,121 +34,101 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
-
-
   hosts:
     - host: "policy.youth-fi.com"
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-
 configMap:
   enabled: true
   data:
     ENVIRONMENT: "production"
     PORT: "8082"
     LOG_LEVEL: "INFO"
-
 secret:
   enabled: false
-
 env:
   ENVIRONMENT: "production"
   PORT: "8082"
   HOST: "0.0.0.0"
   LOG_LEVEL: "INFO"
   RELOAD: "false"
-  
   # FastAPI 설정
   APP_NAME: "policy-service"
   APP_VERSION: "1.0.0"
   DOCS_URL: "/docs"
   REDOC_URL: "/redoc"
   OPENAPI_URL: "/openapi.json"
-  
   # 데이터베이스 연결 설정 (policy)
   PG_DSN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN}
   PG_DSN_ASYNC:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_ASYNC}
   DATABASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: DATABASE_URL }
-  
+      secretKeyRef: {name: policy-secrets, key: DATABASE_URL}
   # 데이터베이스 연결 설정 (finproduct)
   PG_DSN_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_FIN }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_FIN}
   PG_DSN_ASYNC_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC_FIN }
-  
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_ASYNC_FIN}
   # ETL 설정 (policy)
   ETL_SOURCE:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: ETL_SOURCE }
+      secretKeyRef: {name: policy-secrets, key: ETL_SOURCE}
   BASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL}
   API_KEY:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: API_KEY }
-  
+      secretKeyRef: {name: policy-secrets, key: API_KEY}
   # ETL 설정 (finproduct)
   BASE_URL_DEPOSIT:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL_DEPOSIT }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL_DEPOSIT}
   BASE_URL_SAVING:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL_SAVING }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL_SAVING}
   API_KEY_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: API_KEY_FIN }
+      secretKeyRef: {name: policy-secrets, key: API_KEY_FIN}
   GEMINI_API_KEY:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: GEMINI_API_KEY }
-  
+      secretKeyRef: {name: policy-secrets, key: GEMINI_API_KEY}
   # SQLAlchemy 연결 풀 설정
   DB_POOL_SIZE: "10"
   DB_MAX_OVERFLOW: "20"
   DB_POOL_TIMEOUT: "30"
   DB_POOL_RECYCLE: "3600"
-
 resources:
-  limits: { cpu: 300m, memory: 512Mi }
-  requests: { cpu: 100m, memory: 256Mi }
-
+  limits: {cpu: 300m, memory: 512Mi}
+  requests: {cpu: 100m, memory: 256Mi}
 serviceAccount:
   create: true
   name: ""
-
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:
-    drop: [ "ALL" ]
-
+    drop: ["ALL"]
 # 추가 설정
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
-
 autoscaling:
   enabled: false
   minReplicas: 1
