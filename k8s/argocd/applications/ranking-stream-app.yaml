@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ranking-stream
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io/foreground
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/KE-WhyNot/INFRA
+    targetRevision: develop
+    path: k8s/ranking-stream/helm
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ranking-stream
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
