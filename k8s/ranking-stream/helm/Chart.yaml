@@ -1,0 +1,17 @@
+apiVersion: v2
+name: ranking-stream
+description: A Helm chart for Ranking Stream Service
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - ranking
+  - kafka-stream
+  - microservice
+home: https://github.com/KE-WhyNot/INFRA
+sources:
+  - https://github.com/KE-WhyNot/INFRA
+maintainers:
+  - name: INFRA Team
+    email: infra@example.com
+dependencies: []
