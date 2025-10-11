@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/notify-service
-  tag: "31f247b4b92fd002968cb8c165484346b1012173" # This will be updated by CI/CD
+  tag: "446e38f549a214c584d5034bfcdfe02672eafc2c" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
 # Deployment strategy
