@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/KE-WhyNot/INFRA
-    targetRevision: develop
+    targetRevision: main
     path: k8s/ranking-stream/helm
   destination:
     server: https://kubernetes.default.svc
