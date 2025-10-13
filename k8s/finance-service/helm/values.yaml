@@ -5,23 +5,19 @@
 name: finance-service
 component: finance-service
 partOf: microservices
-
 # Image configuration
 image:
   registry: ""
   repository: docker.io/9september/finance-service
-  tag: "latest"  # This will be updated by CI/CD
-
+  tag: "b84b50a1c5520ee74ae4be589c081524b498899e" # This will be updated by CI/CD
 # Replica count
 replicaCount: 1
-
 # Deployment strategy
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 # Service configuration
 service:
   enabled: true
@@ -31,7 +27,6 @@ service:
       targetPort: 8081
       protocol: TCP
       name: http
-
 # Ingress configuration
 ingress:
   enabled: true
@@ -47,12 +42,11 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
   hosts:
-    - host: "finance.youth-fi.com"  # Cloudflare 도메인
+    - host: "finance.youth-fi.com" # Cloudflare 도메인
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-
 # ConfigMap configuration
 configMap:
   enabled: true
@@ -60,18 +54,15 @@ configMap:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8081"
     LOGGING_LEVEL_ROOT: "INFO"
-
 # Secret configuration
 secret:
   enabled: true
-
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8081"
   MANAGEMENT_SERVER_PORT: "8081"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info,health,metrics"
-
   # From Secret: finance-service-secrets
   # Database configuration
   SPRING_DATASOURCE_URL:
@@ -201,10 +192,8 @@ resources:
   requests:
     cpu: 500m
     memory: 1Gi
-
 # Pod configuration
 podAnnotations: {}
-
 # Health checks
 startupProbe:
   httpGet:
@@ -214,7 +203,6 @@ startupProbe:
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 30
-
 livenessProbe:
   httpGet:
     path: /actuator/health
@@ -223,7 +211,6 @@ livenessProbe:
   periodSeconds: 30
   timeoutSeconds: 5
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
@@ -232,19 +219,16 @@ readinessProbe:
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
-
 # Service account
 serviceAccount:
   create: true
   name: ""
   automountServiceAccountToken: true
-
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false

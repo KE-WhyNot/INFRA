@@ -9,8 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/notify-service
-  tag: "446e38f549a214c584d5034bfcdfe02672eafc2c"  # This will be updated by CI/CD
-
+  tag: "bae74ae99e105dc5289fa0a34dd9de3fd1815cc5" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
 # Deployment strategy
@@ -65,8 +64,6 @@ env:
   SERVER_PORT: "8083"
   MANAGEMENT_SERVER_PORT: "8083"
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info"
-
-
   # From Secret: notify-secrets
   SPRING_DATASOURCE_URL:
     valueFrom:
@@ -117,7 +114,6 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
-
 # Service account
 serviceAccount:
   create: true
