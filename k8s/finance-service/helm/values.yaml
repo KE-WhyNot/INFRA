@@ -73,6 +73,7 @@ env:
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info,health,metrics"
 
   # From Secret: finance-service-secrets
+  # Database configuration
   SPRING_DATASOURCE_URL:
     valueFrom:
       secretKeyRef:
@@ -88,51 +89,109 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: SPRING_DATASOURCE_PASSWORD
-  spring.data.redis.host:
+  
+  # Redis configuration
+  SPRING_DATA_REDIS_HOST:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.host
-  spring.data.redis.port:
+        key: SPRING_DATA_REDIS_HOST
+  SPRING_DATA_REDIS_PORT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.port
-  spring.data.redis.password:
+        key: SPRING_DATA_REDIS_PORT
+  SPRING_DATA_REDIS_TIMEOUT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.password
-  spring.data.redis.database:
+        key: SPRING_DATA_REDIS_TIMEOUT
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.database
-  KIS_API_KEYS:
+        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: KIS_API_KEYS
+        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE
+  SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT
+  
+  # KIS API Keys
+  KIS_API_KEY_1_APPKEY:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: KIS_API_KEY_1_APPKEY
+  KIS_API_KEY_1_APPSECRET:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: KIS_API_KEY_1_APPSECRET
+  KIS_API_KEY_2_APPKEY:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: KIS_API_KEY_2_APPKEY
+  KIS_API_KEY_2_APPSECRET:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: KIS_API_KEY_2_APPSECRET
+  
+  # AI Service configuration
   AI_BASE_URL:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: AI_BASE_URL
-  GCP_SA_KEY_FILE:
+  AI_GCP_SERVICE_ACCOUNT_EMAIL:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: GCP_SA_KEY_FILE
-  GCP_SA_EMAIL:
+        key: AI_GCP_SERVICE_ACCOUNT_EMAIL
+  AI_GCP_SERVICE_ACCOUNT_KEY_FILE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: GCP_SA_EMAIL
+        key: AI_GCP_SERVICE_ACCOUNT_KEY_FILE
+  AI_TARGET_AUDIENCE:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: AI_TARGET_AUDIENCE
+  
+  # LLM API configuration
   LLM_API_URL:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: LLM_API_URL
+  LLM_API_TIMEOUT:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: LLM_API_TIMEOUT
+  LLM_API_RETRY_MAX_ATTEMPTS:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: LLM_API_RETRY_MAX_ATTEMPTS
+  LLM_API_RETRY_DELAY:
+    valueFrom:
+      secretKeyRef:
+        name: finance-service-secrets
+        key: LLM_API_RETRY_DELAY
 
 # Resources
 resources:
