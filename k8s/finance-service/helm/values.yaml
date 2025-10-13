@@ -36,7 +36,7 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     # CORS 설정
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://finance.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8081"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://finance.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8081, http://localhost:3000"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
@@ -62,7 +62,7 @@ env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8081"
   MANAGEMENT_SERVER_PORT: "8081"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info,health,metrics"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info"
   # From Secret: finance-service-secrets
   # Database configuration
   SPRING_DATASOURCE_URL:
@@ -81,42 +81,27 @@ env:
         name: finance-service-secrets
         key: SPRING_DATASOURCE_PASSWORD
   
-  # Redis configuration (env 이름은 언더스코어)
+  # Redis configuration
   SPRING_DATA_REDIS_HOST:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.host
+        key: SPRING_DATA_REDIS_HOST
   SPRING_DATA_REDIS_PORT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.port
-  SPRING_DATA_REDIS_TIMEOUT:
+        key: SPRING_DATA_REDIS_PORT
+  SPRING_DATA_REDIS_PASSWORD:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.timeout
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE:
+        key: SPRING_DATA_REDIS_PASSWORD
+  SPRING_DATA_REDIS_DATABASE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: spring.data.redis.lettuce.pool.max-active
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE:
-    valueFrom:
-      secretKeyRef:
-        name: finance-service-secrets
-        key: spring.data.redis.lettuce.pool.max-idle
-  SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE:
-    valueFrom:
-      secretKeyRef:
-        name: finance-service-secrets
-        key: spring.data.redis.lettuce.pool.min-idle
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT:
-    valueFrom:
-      secretKeyRef:
-        name: finance-service-secrets
-        key: spring.data.redis.lettuce.pool.max-wait
+        key: SPRING_DATA_REDIS_DATABASE
   
   # KIS API Keys
   KIS_API_KEY_1_APPKEY:
