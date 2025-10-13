@@ -11,7 +11,7 @@ image:
   repository: docker.io/9september/finance-service
   tag: "b84b50a1c5520ee74ae4be589c081524b498899e" # This will be updated by CI/CD
 # Replica count
-replicaCount: 1
+replicaCount: 2
 # Deployment strategy
 strategy:
   type: RollingUpdate
