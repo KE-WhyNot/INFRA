@@ -49,18 +49,6 @@ spec:
 {{- end }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 10 }}
-        {{- with .Values.startupProbe }}
-        startupProbe:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with .Values.livenessProbe }}
-        livenessProbe:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- if and .Values.readinessProbe (ne .Values.readinessProbe nil) }}
-        readinessProbe:
-          {{- toYaml .Values.readinessProbe | nindent 10 }}
-        {{- end }}
 {{- if .Values.resources }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
