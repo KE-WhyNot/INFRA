@@ -62,7 +62,8 @@ env:
   SPRING_PROFILES_ACTIVE: "prod"
   SERVER_PORT: "8081"
   MANAGEMENT_SERVER_PORT: "8081"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "info"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
   # From Secret: finance-service-secrets
   # Database configuration
   SPRING_DATASOURCE_URL:
@@ -183,15 +184,15 @@ podAnnotations: {}
 startupProbe:
   httpGet:
     path: /actuator/health
-    port: http
+    port: 8081
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 30
 livenessProbe:
   httpGet:
-    path: /actuator/health
-    port: http
+    path: /actuator/health/liveness
+    port: 8081
   initialDelaySeconds: 120
   periodSeconds: 30
   timeoutSeconds: 5
@@ -199,7 +200,7 @@ livenessProbe:
 readinessProbe:
   httpGet:
     path: /actuator/health/readiness
-    port: http
+    port: 8081
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
