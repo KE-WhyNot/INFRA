@@ -36,7 +36,7 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     # CORS 설정
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://notify.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8083"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://notify.youth-fi.com, https://youth-fi.com, https://www.youth-fi.com, http://localhost:5173, http://localhost:8083, http://localhost:3000"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET,PUT,POST,DELETE,OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
