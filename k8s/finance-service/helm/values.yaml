@@ -81,38 +81,38 @@ env:
         name: finance-service-secrets
         key: SPRING_DATASOURCE_PASSWORD
   
-  # Redis configuration
-  spring.data.redis.host:
+  # Redis configuration (env 이름은 언더스코어)
+  SPRING_DATA_REDIS_HOST:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.host
-  spring.data.redis.port:
+  SPRING_DATA_REDIS_PORT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.port
-  spring.data.redis.timeout:
+  SPRING_DATA_REDIS_TIMEOUT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.timeout
-  spring.data.redis.lettuce.pool.max-active:
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.lettuce.pool.max-active
-  spring.data.redis.lettuce.pool.max-idle:
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.lettuce.pool.max-idle
-  spring.data.redis.lettuce.pool.min-idle:
+  SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
         key: spring.data.redis.lettuce.pool.min-idle
-  spring.data.redis.lettuce.pool.max-wait:
+  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
