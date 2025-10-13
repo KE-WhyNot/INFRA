@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/finance-service
-  tag: "b84b50a1c5520ee74ae4be589c081524b498899e" # This will be updated by CI/CD
+  tag: "119d9c482fdc12973161847e91ddebeb6a89fd76" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
 # Deployment strategy
@@ -80,7 +80,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: SPRING_DATASOURCE_PASSWORD
-  
   # Redis configuration
   SPRING_DATA_REDIS_HOST:
     valueFrom:
@@ -102,7 +101,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: SPRING_DATA_REDIS_DATABASE
-  
   # KIS API Keys
   KIS_API_KEY_1_APPKEY:
     valueFrom:
@@ -124,7 +122,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: KIS_API_KEY_2_APPSECRET
-  
   # AI Service configuration
   AI_BASE_URL:
     valueFrom:
@@ -146,7 +143,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: AI_TARGET_AUDIENCE
-  
   # LLM API configuration
   LLM_API_URL:
     valueFrom:
@@ -168,7 +164,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: LLM_API_RETRY_DELAY
-
 # Resources
 resources:
   limits:
