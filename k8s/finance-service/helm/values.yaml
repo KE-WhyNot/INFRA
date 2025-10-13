@@ -82,41 +82,41 @@ env:
         key: SPRING_DATASOURCE_PASSWORD
   
   # Redis configuration
-  SPRING_DATA_REDIS_HOST:
+  spring.data.redis.host:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_HOST
-  SPRING_DATA_REDIS_PORT:
+        key: spring.data.redis.host
+  spring.data.redis.port:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_PORT
-  SPRING_DATA_REDIS_TIMEOUT:
+        key: spring.data.redis.port
+  spring.data.redis.timeout:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_TIMEOUT
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE:
+        key: spring.data.redis.timeout
+  spring.data.redis.lettuce.pool.max-active:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_ACTIVE
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE:
+        key: spring.data.redis.lettuce.pool.max-active
+  spring.data.redis.lettuce.pool.max-idle:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_IDLE
-  SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE:
+        key: spring.data.redis.lettuce.pool.max-idle
+  spring.data.redis.lettuce.pool.min-idle:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_LETTUCE_POOL_MIN_IDLE
-  SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT:
+        key: spring.data.redis.lettuce.pool.min-idle
+  spring.data.redis.lettuce.pool.max-wait:
     valueFrom:
       secretKeyRef:
         name: finance-service-secrets
-        key: SPRING_DATA_REDIS_LETTUCE_POOL_MAX_WAIT
+        key: spring.data.redis.lettuce.pool.max-wait
   
   # KIS API Keys
   KIS_API_KEY_1_APPKEY:
