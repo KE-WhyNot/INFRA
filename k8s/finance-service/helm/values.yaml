@@ -138,11 +138,8 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: AI_GCP_SERVICE_ACCOUNT_EMAIL
-  AI_GCP_SERVICE_ACCOUNT_KEY_FILE:
-    valueFrom:
-      secretKeyRef:
-        name: finance-service-secrets
-        key: AI_GCP_SERVICE_ACCOUNT_KEY_FILE
+  AI_GCP_SERVICE_ACCOUNT_KEY_FILE: "file:/var/secrets/google/key.json"
+  GOOGLE_APPLICATION_CREDENTIALS: "/var/secrets/google/key.json"
   AI_TARGET_AUDIENCE:
     valueFrom:
       secretKeyRef:
@@ -225,3 +222,10 @@ securityContext:
   capabilities:
     drop:
       - ALL
+
+gcpSa:
+  enabled: true
+  secretName: finance-service-sa-key         # 이미 kubectl로 만든 Secret 이름 재사용
+  mountPath: /var/secrets/google
+  key: gcp-service-account.json              # Secret 안의 key 이름
+  fileName: key.json                         # 컨테이너 내부에 보일 파일명
