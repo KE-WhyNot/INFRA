@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/finance-service
-  tag: "5e3425f570186808542db401cb43914d2ee24230" # This will be updated by CI/CD
+  tag: "9f5da1949b2b3920d82dc7b188a9cc8805584a0e" # This will be updated by CI/CD
 # Replica count
 replicaCount: 1
 # Deployment strategy
