@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/finance-service
-  tag: "b84b50a1c5520ee74ae4be589c081524b498899e" # This will be updated by CI/CD
+  tag: "cba735c252cdf8ad970ed79788b63593270d1d96" # This will be updated by CI/CD
 # Replica count
 replicaCount: 1
 # Deployment strategy
@@ -45,11 +45,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection $connection_upgrade;
-      proxy_set_header Origin $http_origin;
-      proxy_set_header Host $host;
+
   hosts:
     - host: "finance.youth-fi.com" # Cloudflare 도메인
       paths:
@@ -91,7 +87,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: SPRING_DATASOURCE_PASSWORD
-  
   # Redis configuration
   SPRING_DATA_REDIS_HOST:
     valueFrom:
@@ -113,7 +108,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: SPRING_DATA_REDIS_DATABASE
-  
   # KIS API Keys
   KIS_API_KEY_1_APPKEY:
     valueFrom:
@@ -135,7 +129,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: KIS_API_KEY_2_APPSECRET
-  
   # AI Service configuration
   AI_BASE_URL:
     valueFrom:
@@ -154,7 +147,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: AI_TARGET_AUDIENCE
-  
   # LLM API configuration
   LLM_API_URL:
     valueFrom:
@@ -176,7 +168,6 @@ env:
       secretKeyRef:
         name: finance-service-secrets
         key: LLM_API_RETRY_DELAY
-
 # Resources
 resources:
   limits:

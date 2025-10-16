@@ -5,23 +5,19 @@
 name: auth-service
 component: auth-service
 partOf: microservices
-
 # Image configuration
 image:
   registry: ""
   repository: docker.io/9september/auth-service
-  tag: "cdcf237f22c1f94f3e0121a589ffaa7865f1f1d2"  # This will be updated by CI/CD
-
+  tag: "dfc299e944a4480a82efae73153eeca9bb746035" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
-
 # Deployment strategy
 strategy:
   type: RollingUpdate
   rollingUpdate:
     maxSurge: 1
     maxUnavailable: 0
-
 # Service configuration
 service:
   enabled: true
@@ -31,7 +27,6 @@ service:
       targetPort: 8080
       protocol: TCP
       name: http
-
 # Ingress configuration
 ingress:
   enabled: true
@@ -47,12 +42,11 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
   hosts:
-    - host: "auth.youth-fi.com"  # Cloudflare 도메인
+    - host: "auth.youth-fi.com" # Cloudflare 도메인
       paths:
         - path: /
           pathType: Prefix
           servicePort: 80
-
 # ConfigMap configuration
 configMap:
   enabled: true
@@ -60,11 +54,9 @@ configMap:
     SPRING_PROFILES_ACTIVE: "prod"
     SERVER_PORT: "8080"
     LOGGING_LEVEL_ROOT: "INFO"
-
 # Secret configuration
 secret:
   enabled: false
-
 # Environment variables
 env:
   SPRING_PROFILES_ACTIVE: "prod"
@@ -74,7 +66,6 @@ env:
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
   MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
   MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
-
   # From Secret: auth-secrets
   spring.datasource.url:
     valueFrom:
@@ -96,7 +87,6 @@ env:
       secretKeyRef:
         name: auth-secrets
         key: spring.datasource.driver-class-name
-
   spring.data.redis.host:
     valueFrom:
       secretKeyRef:
@@ -212,7 +202,6 @@ env:
       secretKeyRef:
         name: auth-secrets
         key: auth.oauth2.clients.kakao.redirect-uri
-
 # Resources
 resources:
   limits:
@@ -221,13 +210,11 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
-
 # Pod configuration
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "8080"
   prometheus.io/path: "/actuator/prometheus"
-
 startupProbe:
   httpGet:
     path: /actuator/health
@@ -236,7 +223,6 @@ startupProbe:
   periodSeconds: 10
   timeoutSeconds: 10
   failureThreshold: 30
-
 # Health checks
 livenessProbe:
   httpGet:
@@ -246,25 +232,21 @@ livenessProbe:
   periodSeconds: 10
   timeoutSeconds: 10
   failureThreshold: 12
-
 # Readiness probe (disabled)
 readinessProbe: null
-
 # Service account
 serviceAccount:
   create: true
   name: ""
-
 # Pod security context
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 2000
-
 # Container security context
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false  # Spring Boot가 임시 파일을 생성할 수 있도록 수정
+  readOnlyRootFilesystem: false # Spring Boot가 임시 파일을 생성할 수 있도록 수정
   runAsNonRoot: true
   runAsUser: 1000
   capabilities:
