@@ -5,7 +5,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "d9996855626dd3602704dfeed71903537c125e5a"
+  tag: "64383b80717f0cfc7c6b28c5c4180e8eddde1115"
   pullPolicy: IfNotPresent
 replicaCount: 2
 strategy:
