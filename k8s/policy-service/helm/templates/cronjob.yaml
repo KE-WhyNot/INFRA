@@ -1,0 +1,64 @@
+{{- range $name, $cj := .Values.cronjobs }}
+{{- if $cj.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ printf "%s-%s" (default $.Chart.Name $.Values.name) $name }}
+  labels:
+    app.kubernetes.io/name: {{ default $.Chart.Name $.Values.name }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: cronjob
+spec:
+  {{- if $cj.timeZone }}
+  timeZone: {{ $cj.timeZone | quote }}
+  {{- end }}
+  schedule: {{ $cj.schedule | quote }}
+  concurrencyPolicy: {{ default "Forbid" $cj.concurrencyPolicy }}
+  {{- if $cj.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ $cj.startingDeadlineSeconds }}
+  {{- end }}
+  successfulJobsHistoryLimit: {{ default 3 $cj.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default 1 $cj.failedJobsHistoryLimit }}
+  suspend: {{ default false $cj.suspend }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      {{- if $cj.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ $cj.ttlSecondsAfterFinished }}
+      {{- end }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ default $.Chart.Name $.Values.name }}
+            app.kubernetes.io/instance: {{ $.Release.Name }}
+            app.kubernetes.io/component: cronjob
+        spec:
+          restartPolicy: Never
+          {{- if $.Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- range $.Values.imagePullSecrets }}
+            - name: {{ . }}
+          {{- end }}
+          {{- end }}
+          containers:
+            - name: {{ $name }}
+              image: "{{ $cj.image.repository }}:{{ $cj.image.tag }}"
+              imagePullPolicy: {{ default "IfNotPresent" $cj.image.pullPolicy }}
+              {{- if $cj.command }}
+              command:
+              {{- range $cj.command }}
+                - "{{ . }}"
+              {{- end }}
+              {{- end }}
+              {{- if $cj.envFromSecret }}
+              envFrom:
+                - secretRef:
+                    name: {{ $cj.envFromSecret }}
+              {{- end }}
+              {{- if $cj.resources }}
+              resources:
+                {{- toYaml $cj.resources | nindent 16 }}
+              {{- end }}
+---
+{{- end }}
+{{- end }}
