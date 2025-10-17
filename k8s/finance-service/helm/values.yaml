@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/finance-service
-  tag: "65ea589cbe2ec8a5a6de799b1e7e5bee2970ac0b" # This will be updated by CI/CD
+  tag: "087edf91a8d824868ee3929983e07d7bfbc7d94b" # This will be updated by CI/CD
 # Replica count
 replicaCount: 2
 # Deployment strategy
@@ -41,7 +41,6 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Authorization,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,X-User-Id"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-max-age: "86400"
-
   hosts:
     - host: "finance.youth-fi.com" # Cloudflare 도메인
       paths:
