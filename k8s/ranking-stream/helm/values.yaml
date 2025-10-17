@@ -9,7 +9,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/ranking-stream
-  tag: "2688b3bff6b4f9856a9775d5defbef898bfc2a56" # This will be updated by CI/CD
+  tag: "c2c5672a4736909354a0e338c8a5f9d430dbb246" # This will be updated by CI/CD
 # Replica count
 replicaCount: 1
 # Deployment strategy
