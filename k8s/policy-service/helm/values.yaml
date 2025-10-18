@@ -166,7 +166,8 @@ securityContext:
   capabilities:
     drop: ["ALL"]
 # 추가 설정
-imagePullSecrets: ["ghcr-pull"]
+imagePullSecrets:
+  - name: ghcr-pull
 nameOverride: ""
 fullnameOverride: ""
 nodeSelector: {}
