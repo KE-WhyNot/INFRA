@@ -36,9 +36,7 @@ spec:
           restartPolicy: Never
           {{- if $.Values.imagePullSecrets }}
           imagePullSecrets:
-          {{- range $.Values.imagePullSecrets }}
-            - name: {{ . }}
-          {{- end }}
+            {{- toYaml $.Values.imagePullSecrets | nindent 12 }}
           {{- end }}
           containers:
             - name: {{ $name }}
