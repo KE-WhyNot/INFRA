@@ -5,7 +5,7 @@ partOf: microservices
 image:
   registry: ""
   repository: docker.io/9september/policy-service
-  tag: "64383b80717f0cfc7c6b28c5c4180e8eddde1115"
+  tag: "15413e509f4274a67f50a4eef8e4dbc796934349"
   pullPolicy: IfNotPresent
 replicaCount: 2
 strategy:
@@ -63,52 +63,51 @@ env:
   # 데이터베이스 연결 설정 (policy)
   PG_DSN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN}
   PG_DSN_ASYNC:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_ASYNC}
   DATABASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: DATABASE_URL }
+      secretKeyRef: {name: policy-secrets, key: DATABASE_URL}
   # 데이터베이스 연결 설정 (finproduct)
   PG_DSN_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_FIN }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_FIN}
   PG_DSN_ASYNC_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: PG_DSN_ASYNC_FIN }
+      secretKeyRef: {name: policy-secrets, key: PG_DSN_ASYNC_FIN}
   # ETL 설정 (policy)
   ETL_SOURCE:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: ETL_SOURCE }
+      secretKeyRef: {name: policy-secrets, key: ETL_SOURCE}
   BASE_URL:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL}
   API_KEY:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: API_KEY }
+      secretKeyRef: {name: policy-secrets, key: API_KEY}
   # ETL 설정 (finproduct)
   BASE_URL_DEPOSIT:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL_DEPOSIT }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL_DEPOSIT}
   BASE_URL_SAVING:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: BASE_URL_SAVING }
+      secretKeyRef: {name: policy-secrets, key: BASE_URL_SAVING}
   API_KEY_FIN:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: API_KEY_FIN }
+      secretKeyRef: {name: policy-secrets, key: API_KEY_FIN}
   GEMINI_API_KEY:
     valueFrom:
-      secretKeyRef: { name: policy-secrets, key: GEMINI_API_KEY }
+      secretKeyRef: {name: policy-secrets, key: GEMINI_API_KEY}
   # SQLAlchemy 연결 풀 설정
   DB_POOL_SIZE: "10"
   DB_MAX_OVERFLOW: "20"
   DB_POOL_TIMEOUT: "30"
   DB_POOL_RECYCLE: "3600"
 resources:
-  limits: { cpu: 300m, memory: 512Mi }
-  requests: { cpu: 100m, memory: 256Mi }
-
+  limits: {cpu: 300m, memory: 512Mi}
+  requests: {cpu: 100m, memory: 256Mi}
 # CronJob 설정
 cronjobs:
   policy:
@@ -121,8 +120,8 @@ cronjobs:
       pullPolicy: IfNotPresent
     command: ["python", "/app/app/elt/policy/run_all_policy_elt.py"]
     resources:
-      requests: { cpu: "200m", memory: "256Mi" }
-      limits: { cpu: "500m", memory: "512Mi" }
+      requests: {cpu: "200m", memory: "256Mi"}
+      limits: {cpu: "500m", memory: "512Mi"}
     concurrencyPolicy: "Forbid"
     startingDeadlineSeconds: 600
     successfulJobsHistoryLimit: 3
@@ -130,7 +129,6 @@ cronjobs:
     ttlSecondsAfterFinished: 1800
     suspend: false
     envFromSecret: "policy-secrets"
-
   finproduct:
     enabled: true
     schedule: "20 15 * * *" # 00:20 KST → 15:20 UTC
@@ -141,8 +139,8 @@ cronjobs:
       pullPolicy: IfNotPresent
     command: ["python", "/app/app/elt/finproduct/run_all_finproduct_elt.py"]
     resources:
-      requests: { cpu: "200m", memory: "256Mi" }
-      limits: { cpu: "500m", memory: "512Mi" }
+      requests: {cpu: "200m", memory: "256Mi"}
+      limits: {cpu: "500m", memory: "512Mi"}
     concurrencyPolicy: "Forbid"
     startingDeadlineSeconds: 600
     successfulJobsHistoryLimit: 3
@@ -150,7 +148,6 @@ cronjobs:
     ttlSecondsAfterFinished: 1800
     suspend: false
     envFromSecret: "policy-secrets"
-
 serviceAccount:
   create: true
   name: ""
